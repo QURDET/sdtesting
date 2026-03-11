@@ -1119,7 +1119,10 @@ async function doLogin() {
         });
         if (!r.ok) {
             _loginFails++;
-            document.getElementById('login-error').style.display = 'block';
+            const errData = await r.json().catch(() => ({}));
+            const errEl = document.getElementById('login-error');
+            errEl.textContent = errData.error || 'Incorrect username or password.';
+            errEl.style.display = 'block';
             if (_loginFails >= 3) document.getElementById('login-reset-hint').style.display = 'block';
             return;
         }

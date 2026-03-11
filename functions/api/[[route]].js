@@ -45,6 +45,15 @@ export async function onRequest(context) {
         }
         const d = JSON.parse(raw);
         if (!d.settings) d.settings = { googleClientId: '' };
+        if (d.users) {
+            d.users = d.users.map(u => {
+                if (!u.password) {
+                    const def = DEFAULT_DATA.users.find(du => du.id === u.id);
+                    if (def) return { ...u, password: def.password };
+                }
+                return u;
+            });
+        }
         return d;
     }
 
