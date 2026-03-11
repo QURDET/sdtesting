@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1396,7 +1396,7 @@ async function renderOrders() {
     const isLiveKey = getStripeKey().startsWith('sk_live') || getStripeKey().startsWith('rk_live');
     const stripeLinkBase = isLiveKey ? 'https://dashboard.stripe.com/payments/' : 'https://dashboard.stripe.com/test/payments/';
 
-    tbody.innerHTML = filtered.map(o => `<tr>
+    tbody.innerHTML = filtered.map(o => `<tr data-order-id="${o.id}">
         <td><strong>${o.id}</strong></td>
         <td>${o.date}</td>
         <td>${o.items}</td>
@@ -1505,8 +1505,10 @@ async function saveOrder() {
 
 async function deleteOrder(id) {
     await saveOrders((await getOrders()).filter(o => o.id !== id));
-    await renderOrders();
-    await renderDashboard();
+    // Remove the row directly — avoids full re-render and scroll-to-top
+    const row = document.querySelector(`#ord-tbody tr[data-order-id="${id}"]`);
+    if (row) row.remove();
+    renderDashboard();
 }
 
 // ─────────────────────────────────────────────
