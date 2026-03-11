@@ -736,7 +736,6 @@
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
-                                    <th>Customer</th>
                                     <th>Date</th>
                                     <th>Items</th>
                                     <th>Total</th>
@@ -1381,7 +1380,7 @@ async function renderOrders() {
     const sf      = document.getElementById('ord-status-filter')?.value || '';
     const canEdit = currentUser.role !== 'viewer';
 
-    document.getElementById('ord-tbody').innerHTML = '<tr><td colspan="12" style="text-align:center;color:#9B7B6E;padding:20px">Loading…</td></tr>';
+    document.getElementById('ord-tbody').innerHTML = '<tr><td colspan="11" style="text-align:center;color:#9B7B6E;padding:20px">Loading…</td></tr>';
     const _orders = await getOrders();
     const filtered = _orders
         .filter(o => (!q || o.customer.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)) && (!sf || o.status === sf))
@@ -1389,7 +1388,7 @@ async function renderOrders() {
 
     const tbody = document.getElementById('ord-tbody');
     if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="e-icon">🛒</div><p>No orders found</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state"><div class="e-icon">🛒</div><p>No orders found</p></div></td></tr>`;
         return;
     }
 
@@ -1399,7 +1398,6 @@ async function renderOrders() {
 
     tbody.innerHTML = filtered.map(o => `<tr>
         <td><strong>${o.id}</strong></td>
-        <td>${o.customer}${o.notes ? `<br><small style="color:#9B7B6E">${o.notes}</small>` : ''}</td>
         <td>${o.date}</td>
         <td>${o.items}</td>
         <td>£${parseFloat(o.total).toFixed(2)}</td>
