@@ -38,7 +38,7 @@ function json(data, status = 200) {
 export async function onRequest(context) {
     const { request, env } = context;
     const url    = new URL(request.url);
-    const route  = url.pathname.replace(/^/api//, '').replace(//$/, '');
+    const parts = url.pathname.split('/api/'); const route = parts.length > 1 ? parts[1] : '';
     const method = request.method;
 
     if (method === 'OPTIONS') return new Response(null, { status: 200, headers: CORS });
