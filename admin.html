@@ -1485,7 +1485,7 @@ async function saveTeamMember() {
     }
 }
 
-function deleteTeamMember(id) {
+async function deleteTeamMember(id) {
     if (!confirm('Remove this team member? They will no longer be able to log in.')) return;
     await saveUsers((await getUsers()).filter(u => u.id !== id));
     await renderTeam();
