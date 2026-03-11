@@ -1360,6 +1360,14 @@ async function quickTracking(id, url) {
     if (o && o.tracking !== url) { o.tracking = url; await saveOrders(orders); }
 }
 
+async function addTracking(id, current) {
+    const url = prompt('Enter tracking link:', current || '');
+    if (url === null) return;          // cancelled
+    const trimmed = url.trim();
+    await quickTracking(id, trimmed);
+    await renderOrders();
+}
+
 async function quickAssign(id, assignee) {
     const orders = await getOrders();
     const o = orders.find(x => x.id === id);
@@ -1398,12 +1406,12 @@ async function renderOrders() {
         <td>${o.country || '—'}</td>
         <td>${o.shipping || '—'}</td>
         <td>
-            ${canEdit
-              ? `<input type="url" value="${o.tracking||''}" placeholder="Paste link…"
-                  style="width:110px;font-size:0.73rem;border:1px solid #E8D5C4;border-radius:6px;padding:3px 7px;color:#3B2417;background:#FAF6F1"
-                  onblur="quickTracking('${o.id}',this.value.trim())"
-                  onkeydown="if(event.key==='Enter')this.blur()">`
-              : (o.tracking ? `<a href="${o.tracking}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:3px 8px">Track ↗</a>` : '—')
+            ${o.tracking
+              ? `<span style="display:flex;align-items:center;gap:4px">
+                  <a href="${o.tracking}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">Track ↗</a>
+                  ${canEdit ? `<button class="btn btn-sm" onclick="addTracking('${o.id}','${o.tracking.replace(/'/g,'')}')" style="font-size:0.72rem;padding:2px 6px;background:none;border:1px solid #ddd;border-radius:5px;cursor:pointer;color:#9B7B6E" title="Edit link">✎</button>` : ''}
+                </span>`
+              : (canEdit ? `<button class="btn btn-sm btn-outline" onclick="addTracking('${o.id}','')" style="font-size:0.73rem;padding:3px 8px">+ Add Link</button>` : '—')
             }
         </td>
         <td>${o.stripeId ? `<a href="${stripeLinkBase}${o.stripeId}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:3px 8px">View ↗</a>` : '—'}</td>
