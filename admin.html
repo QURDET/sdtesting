@@ -974,7 +974,7 @@
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="team-password" placeholder="Password">
+            <input type="password" id="team-password" placeholder="Password"><small id="team-pw-hint" style="color:#9B7B6E;font-size:0.78rem;display:none">Leave blank to keep current password</small>
         </div>
         <div class="form-group">
             <label>Role</label>
@@ -1071,8 +1071,8 @@
 // DEFAULT DATA
 // ─────────────────────────────────────────────
 const DEFAULT_USERS = [
-    { id: 'u1', username: 'mamda006.310', password: 'HelloAbbas2023!', name: 'Abbas M',  role: 'admin' },
-    { id: 'u2', username: 'zjets988', password: 'ZahraJets2024!',  name: 'Zahra J',  role: 'staff' },
+    { id: 'u1', username: 'mamda006.310', name: 'Abbas M',  role: 'admin' },
+    { id: 'u2', username: 'zjets988',     name: 'Zahra J',  role: 'staff' },
 ];
 
 const DEFAULT_INVENTORY = [
@@ -1111,21 +1111,29 @@ let _loginFails = 0;
 async function doLogin() {
     const u = document.getElementById('login-u').value.trim();
     const p = document.getElementById('login-p').value;
-    const lsUsers = await getUsers();
-    let found = lsUsers.find(x => x.username === u && x.password === p);
-    if (!found) found = DEFAULT_USERS.find(x => x.username === u && x.password === p);
-    if (!found) {
+    try {
+        const r = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u, password: p })
+        });
+        if (!r.ok) {
+            _loginFails++;
+            document.getElementById('login-error').style.display = 'block';
+            if (_loginFails >= 3) document.getElementById('login-reset-hint').style.display = 'block';
+            return;
+        }
+        const found = await r.json();
+        _loginFails = 0;
+        currentUser = found;
+        sessionStorage.setItem('qd_sess', JSON.stringify(found));
+        document.getElementById('login-error').style.display = 'none';
+        document.getElementById('login-reset-hint').style.display = 'none';
+        showPanel();
+    } catch {
         _loginFails++;
         document.getElementById('login-error').style.display = 'block';
-        if (_loginFails >= 3) document.getElementById('login-reset-hint').style.display = 'block';
-        return;
     }
-    _loginFails = 0;
-    currentUser = found;
-    sessionStorage.setItem('qd_sess', JSON.stringify(found));
-    document.getElementById('login-error').style.display = 'none';
-    document.getElementById('login-reset-hint').style.display = 'none';
-    showPanel();
 }
 
 async function resetAdminData() {
@@ -1164,17 +1172,19 @@ function showPanel() {
     showTab('dashboard');
 }
 
-// Restore session (only if the stored user still matches a valid login)
+// Restore session (verify user still exists on server)
 (async function () {
     try {
         const s = sessionStorage.getItem('qd_sess');
         if (s) {
             const stored = JSON.parse(s);
-            const lsUsers = await getUsers();
-            const allUsers = [...lsUsers, ...DEFAULT_USERS.filter(d => !lsUsers.find(x => x.id === d.id))];
-            const valid = allUsers.find(x => x.username === stored.username && x.password === stored.password);
-            if (valid) { currentUser = valid; showPanel(); }
-            else { sessionStorage.removeItem('qd_sess'); }
+            const r = await fetch('/api/users');
+            if (r.ok) {
+                const users = await r.json();
+                const valid = users.find(x => x.id === stored.id && x.username === stored.username);
+                if (valid) { currentUser = { ...stored, ...valid }; showPanel(); return; }
+            }
+            sessionStorage.removeItem('qd_sess');
         }
     } catch { sessionStorage.removeItem('qd_sess'); }
 })();
@@ -1603,30 +1613,32 @@ async function openTeamModal(id) {
         const u = (await getUsers()).find(x => x.id === id);
         document.getElementById('team-name').value         = u.name;
         document.getElementById('team-username').value     = u.username;
-        document.getElementById('team-password').value     = u.password;
+        document.getElementById('team-password').value     = '';
+        document.getElementById('team-pw-hint').style.display = 'block';
         document.getElementById('team-role').value         = u.role;
         document.getElementById('team-google-email').value = u.googleEmail || '';
     } else {
         ['team-name','team-username','team-password','team-google-email'].forEach(f => document.getElementById(f).value = '');
+        document.getElementById('team-pw-hint').style.display = 'none';
         document.getElementById('team-role').value = 'staff';
     }
     openModal('team-modal');
 }
 
 async function saveTeamMember() {
-    const name     = document.getElementById('team-name').value.trim();
-    const username = document.getElementById('team-username').value.trim().toLowerCase().replace(/\s/g, '');
-    const password = document.getElementById('team-password').value;
+    const name        = document.getElementById('team-name').value.trim();
+    const username    = document.getElementById('team-username').value.trim().toLowerCase().replace(/\s/g, '');
+    const password    = document.getElementById('team-password').value;
     const role        = document.getElementById('team-role').value;
     const googleEmail = document.getElementById('team-google-email').value.trim().toLowerCase() || '';
+    const editId      = document.getElementById('team-edit-id').value;
 
-    if (!name || !username || !password) {
-        alert('Please fill in all fields.');
+    if (\!name || \!username || (\!editId && \!password)) {
+        alert('Please fill in all required fields.');
         return;
     }
 
-    const users  = await getUsers();
-    const editId = document.getElementById('team-edit-id').value;
+    const users = await getUsers();
 
     if (editId) {
         const idx = users.findIndex(x => x.id === editId);
@@ -1685,7 +1697,7 @@ async function saveProfile() {
         return;
     }
 
-    const password = newPassword || currentUser.password;
+    const password = newPassword; // server preserves existing if empty
 
     // Update or insert into localStorage
     const idx = users.findIndex(u => u.id === currentUser.id);
