@@ -871,12 +871,23 @@
                 <div id="email-alerts-section" style="margin-top:36px">
                     <div class="section-header"><h3>Email Alerts</h3></div>
                     <div style="background:white;border-radius:16px;padding:24px;max-width:480px;box-shadow:0 2px 10px rgba(59,36,23,0.07)">
-                        <p style="color:#9B7B6E;font-size:0.85rem;margin-bottom:16px;line-height:1.6">Set the "from" address for low stock alert emails. Requires a <code>SEND_EMAIL</code> email binding in Cloudflare Pages → Settings → Functions → Email bindings.</p>
+                        <p style="color:#9B7B6E;font-size:0.85rem;margin-bottom:12px;line-height:1.6">Sends low stock alerts via Gmail using a Google Apps Script webhook. <strong>Setup:</strong></p>
+                        <ol style="color:#9B7B6E;font-size:0.82rem;line-height:1.8;margin:0 0 16px 16px;padding:0">
+                            <li>Go to <a href="https://script.google.com" target="_blank" style="color:#7B3F5E">script.google.com</a> → New project</li>
+                            <li>Paste the script shown below, then click Deploy → New deployment → Web app</li>
+                            <li>Set "Execute as: Me" and "Who has access: Anyone" → Deploy → copy the URL</li>
+                            <li>Paste that URL here and save</li>
+                        </ol>
+                        <pre style="background:#F8F4F2;border-radius:8px;padding:12px;font-size:0.75rem;overflow-x:auto;margin-bottom:16px">function doPost(e) {
+  var d = JSON.parse(e.postData.contents);
+  GmailApp.sendEmail(d.to, d.subject, d.body);
+  return ContentService.createTextOutput('ok');
+}</pre>
                         <div class="form-group">
-                            <label>From Email Address</label>
-                            <input type="email" id="alert-from-email-input" placeholder="e.g. alerts@yourdomain.com" style="width:100%;box-sizing:border-box">
+                            <label>Apps Script Webhook URL</label>
+                            <input type="url" id="gmail-webhook-url-input" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%;box-sizing:border-box">
                         </div>
-                        <button class="btn btn-purple" style="margin-top:8px" onclick="saveAlertFromEmail()">Save</button>
+                        <button class="btn btn-purple" style="margin-top:8px" onclick="saveGmailWebhook()">Save</button>
                     </div>
                 </div>
 
@@ -2048,31 +2059,31 @@ async function disconnectGoogle() {
 loadGoogleSettings();
 
 // ─────────────────────────────────────────────
-// EMAIL ALERT SETTINGS
+// EMAIL ALERT SETTINGS (Gmail webhook)
 // ─────────────────────────────────────────────
-async function loadAlertFromEmail() {
+async function loadGmailWebhook() {
     try {
         const r = await fetch('/api/settings');
         if (!r.ok) return;
         const s = await r.json();
-        if (s.alertFromEmail) document.getElementById('alert-from-email-input').value = s.alertFromEmail;
+        if (s.gmailWebhookUrl) document.getElementById('gmail-webhook-url-input').value = s.gmailWebhookUrl;
     } catch {}
 }
 
-async function saveAlertFromEmail() {
-    const email = document.getElementById('alert-from-email-input').value.trim();
+async function saveGmailWebhook() {
+    const url = document.getElementById('gmail-webhook-url-input').value.trim();
     try {
         const r = await fetch('/api/settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ alertFromEmail: email }),
+            body: JSON.stringify({ gmailWebhookUrl: url }),
         });
-        if (r.ok) alert('Alert email saved.');
+        if (r.ok) alert('Webhook URL saved.');
         else alert('Failed to save.');
     } catch { alert('Failed to save.'); }
 }
 
-loadAlertFromEmail();
+loadGmailWebhook();
 
 </script>
 

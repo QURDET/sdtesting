@@ -135,33 +135,24 @@ export async function onRequest(context) {
             const oldInv = d.inventory;
             d.inventory = await request.json();
             await writeData(d);
-            // Send low stock alerts when qty crosses below threshold
-            if (env.SEND_EMAIL) {
-                const fromEmail = d.settings?.alertFromEmail || '';
+            // Send low stock alerts via Gmail webhook when qty crosses below threshold
+            const webhookUrl = d.settings?.gmailWebhookUrl || '';
+            if (webhookUrl) {
                 for (const item of d.inventory) {
-                    if (!item.notifyEmail || !fromEmail) continue;
+                    if (!item.notifyEmail) continue;
                     const old = oldInv.find(p => p.id === item.id);
                     const wasOk = old ? old.qty > old.threshold : true;
                     const isLow = item.qty <= item.threshold;
                     if (wasOk && isLow) {
-                        try {
-                            const raw = [
-                                `Date: ${new Date().toUTCString()}`,
-                                `From: ${fromEmail}`,
-                                `To: ${item.notifyEmail}`,
-                                `Subject: Low Stock Alert: ${item.name}`,
-                                `MIME-Version: 1.0`,
-                                `Content-Type: text/plain; charset=utf-8`,
-                                ``,
-                                `Stock for ${item.name} (SKU: ${item.sku}) has dropped to ${item.qty}, at or below your threshold of ${item.threshold}.`,
-                                ``,
-                                `Log in to the staff panel to restock.`,
-                            ].join('\r\n');
-                            const bytes = new TextEncoder().encode(raw);
-                            const stream = new ReadableStream({ start(c) { c.enqueue(bytes); c.close(); } });
-                            const msg = new EmailMessage(fromEmail, item.notifyEmail, stream);
-                            await env.SEND_EMAIL.send(msg);
-                        } catch (_) {}
+                        fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: item.notifyEmail,
+                                subject: `Low Stock Alert: ${item.name}`,
+                                body: `Stock for ${item.name} (SKU: ${item.sku}) has dropped to ${item.qty}, at or below your threshold of ${item.threshold}.\n\nLog in to the staff panel to restock.`,
+                            }),
+                        }).catch(() => {});
                     }
                 }
             }
