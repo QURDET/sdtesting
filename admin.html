@@ -1227,9 +1227,10 @@ async function renderDashboard() {
     const inv    = await getInventory();
     const orders = await getOrders();
 
-    const revenue    = orders.filter(o => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0);
-    const totalOrds  = orders.length;
-    const pending    = orders.filter(o => o.status === 'pending').length;
+    const visible    = orders.filter(o => !o._deleted);
+    const revenue    = visible.filter(o => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0);
+    const totalOrds  = visible.length;
+    const pending    = visible.filter(o => o.status === 'pending').length;
     const totalStock = inv.reduce((a, p) => a + p.qty, 0);
     const lowStock   = inv.filter(p => p.qty <= p.threshold);
 
@@ -1256,7 +1257,7 @@ async function renderDashboard() {
         </div>
     `;
 
-    const recent = [...orders].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+    const recent = [...visible].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
     document.getElementById('recent-orders-wrap').innerHTML = recent.length
         ? `<table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>
            ${recent.map(o => `<tr>
@@ -1408,7 +1409,7 @@ async function renderOrders() {
     document.getElementById('ord-tbody').innerHTML = '<tr><td colspan="11" style="text-align:center;color:#9B7B6E;padding:20px">Loading…</td></tr>';
     const _orders = await getOrders();
     const filtered = _orders
-        .filter(o => o.status !== 'delivered' && (!q || o.customer.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)) && (!sf || o.status === sf))
+        .filter(o => !o._deleted && o.status !== 'delivered' && (!q || o.customer.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)) && (!sf || o.status === sf))
         .sort((a, b) => b.date.localeCompare(a.date));
 
     const tbody = document.getElementById('ord-tbody');
@@ -1533,7 +1534,12 @@ async function saveOrder() {
 async function deleteOrder(id) {
     if (!confirm('Delete this order? This cannot be undone.')) return;
     const orders = await getOrders();
-    const ok = await saveOrders(orders.filter(o => o.id !== id));
+    const order = orders.find(o => o.id === id);
+    // Stripe-linked orders must be soft-deleted so Stripe sync doesn't re-import them
+    const updated = (order && order.stripeId)
+        ? orders.map(o => o.id === id ? { ...o, _deleted: true } : o)
+        : orders.filter(o => o.id !== id);
+    const ok = await saveOrders(updated);
     if (!ok) { alert('Failed to delete order — please try again.'); return; }
     document.querySelectorAll(`tr[data-order-id="${id}"]`).forEach(r => r.remove());
     renderDashboard();
@@ -1541,7 +1547,7 @@ async function deleteOrder(id) {
 
 // ─────────────────────────────────────────────
 function renderFinishedOrders(allOrders, canEdit) {
-    var finished = allOrders.filter(function(o) { return o.status === "delivered"; }).sort(function(a,b){ return b.date.localeCompare(a.date); });
+    var finished = allOrders.filter(function(o) { return !o._deleted && o.status === "delivered"; }).sort(function(a,b){ return b.date.localeCompare(a.date); });
     var countEl = document.getElementById("finished-count");
     if (countEl) countEl.textContent = finished.length ? "(" + finished.length + ")" : "";
     var tbody = document.getElementById("finished-tbody");
