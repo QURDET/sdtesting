@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Quran Detectives</title>
+
+    <meta name="description" content="Get in touch with Quran Detectives. Contact us via email or WhatsApp.">
+    <link rel="icon" type="image/jpeg" href="qdlogo.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #FAF6F1;
+            color: #3B2417;
+            min-height: 100vh;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(59, 36, 23, 0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-brand img {
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .nav-brand span {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #3B2417;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Nunito', sans-serif;
+            color: #5C4033;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #7B3F5E;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background: #3B2417;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+        /* ── Page header ── */
+        .page-header {
+            background: linear-gradient(135deg, #F5E8D6 0%, #EFE0CE 40%, #E8D5C4 100%);
+            padding: 140px 5% 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(123, 63, 94, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(107, 123, 141, 0.06) 0%, transparent 50%);
+        }
+
+        .page-header .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #3B2417;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+        }
+
+        .page-header p {
+            font-size: 1.05rem;
+            color: #5C4033;
+            font-weight: 400;
+        }
+
+        /* ── Contact section ── */
+        .contact-section {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 5% 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .contact-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 36px 40px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            box-shadow: 0 4px 20px rgba(59, 36, 23, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(59, 36, 23, 0.14);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .contact-icon.email {
+            background: #F5E8D6;
+        }
+
+        .contact-icon.whatsapp {
+            background: #e8f5e9;
+        }
+
+        .contact-info h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #3B2417;
+            margin-bottom: 4px;
+        }
+
+        .contact-info p {
+            font-size: 1rem;
+            color: #7B3F5E;
+            font-weight: 500;
+        }
+
+        .contact-info small {
+            display: block;
+            font-size: 0.8rem;
+            color: #9E8071;
+            margin-top: 4px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: #ffffff;
+            color: #6B5B4F;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0; right: 0;
+                width: 260px;
+                height: 100vh;
+                background: #ffffff;
+                flex-direction: column;
+                padding: 80px 30px 30px;
+                gap: 1.5rem;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+                z-index: 999;
+            }
+
+            .nav-links.active { display: flex; }
+
+            .hamburger {
+                display: flex;
+                z-index: 1001;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+
+            .contact-card {
+                padding: 24px 24px;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a class="nav-brand" href="index.html">
+            <img src="qdlogo.jpg" alt="Quran Detectives Logo">
+            <span>Quran Detectives</span>
+        </a>
+        <button class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="shiadeal.html">Shia Deal</a></li>
+            <li><a href="contactus.html" class="active">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-header">
+        <div class="content">
+            <h1>Contact Us</h1>
+            <p>We'd love to hear from you — reach out any time!</p>
+        </div>
+    </div>
+
+    <section class="contact-section">
+
+        <a class="contact-card" href="mailto:qurandetectives@gmail.com">
+            <div class="contact-icon email">✉️</div>
+            <div class="contact-info">
+                <h2>Email Us</h2>
+                <p>qurandetectives@gmail.com</p>
+                <small>We'll get back to you as soon as possible</small>
+            </div>
+        </a>
+
+        <a class="contact-card" href="https://wa.me/447879682345">
+            <div class="contact-icon whatsapp">💬</div>
+            <div class="contact-info">
+                <h2>WhatsApp</h2>
+                <p>07879 682 345</p>
+                <small>Message us directly on WhatsApp</small>
+            </div>
+        </a>
+
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Quran Detectives. All rights reserved.</p>
+        <a href="admin.html" style="display:inline-block;margin-top:12px;padding:7px 18px;background:#3B2417;color:#fff;border-radius:8px;font-family:'Poppins',sans-serif;font-size:0.8rem;font-weight:600;text-decoration:none;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Staff</a>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+            document.querySelector('.hamburger').classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>
