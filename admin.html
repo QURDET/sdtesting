@@ -1096,7 +1096,7 @@ const DEFAULT_ORDERS = [
 // ─────────────────────────────────────────────
 async function getUsers()     { try { const r = await fetch('/api/users');     return r.ok ? r.json() : DEFAULT_USERS;     } catch { return DEFAULT_USERS;     } }
 async function getInventory() { try { const r = await fetch('/api/inventory'); return r.ok ? r.json() : DEFAULT_INVENTORY; } catch { return DEFAULT_INVENTORY; } }
-async function getOrders()    { try { const r = await fetch('/api/orders');    return r.ok ? r.json() : DEFAULT_ORDERS;    } catch { return DEFAULT_ORDERS;    } }
+async function getOrders()    { try { const r = await fetch('/api/orders');    return r.ok ? r.json() : [];               } catch { return [];                  } }
 async function saveUsers(v)     { try { await fetch('/api/users',     { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(v) }); } catch {} }
 async function saveInventory(v) { try { await fetch('/api/inventory', { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(v) }); } catch {} }
 async function saveOrders(v)    { try { await fetch('/api/orders',    { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(v) }); } catch {} }
