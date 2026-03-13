@@ -745,7 +745,7 @@
                                     <th>Country</th>
                                     <th>Customer Name</th>
                                     <th>Track</th>
-                                    <th>Stripe</th>
+                                    <th>Shipping Type</th>
                                     <th>Status</th>
                                     <th>Assigned</th>
                                     <th>Actions</th>
@@ -761,7 +761,7 @@
                         <div class="section-header" style="margin-top:4px"><h3>Finished Orders</h3></div>
                         <div class="table-card">
                             <table>
-                                <thead><tr><th>Order ID</th><th>Date</th><th>Order type</th><th>Total</th><th>Country</th><th>Customer Name</th><th>Track</th><th>Stripe</th><th>Status</th><th>Assigned</th><th>Actions</th></tr></thead>
+                                <thead><tr><th>Order ID</th><th>Date</th><th>Order type</th><th>Total</th><th>Country</th><th>Customer Name</th><th>Track</th><th>Shipping Type</th><th>Status</th><th>Assigned</th><th>Actions</th></tr></thead>
                                 <tbody id="finished-tbody"></tbody>
                             </table>
                         </div>
@@ -945,8 +945,18 @@
             <input type="text" id="ord-customer" placeholder="Full name">
         </div>
         <div class="form-group">
-            <label>Order location (stripe or in person)</label>
+            <label>Items / Order Description</label>
             <input type="text" id="ord-items" placeholder="e.g. 2x Standard Pack, 1x Expansion">
+        </div>
+        <div class="form-group">
+            <label>Shipping Type</label>
+            <select id="ord-shipping-type">
+                <option value="">— Select —</option>
+                <option value="Standard Post">Standard Post</option>
+                <option value="Tracked Post">Tracked Post</option>
+                <option value="Collection">Collection</option>
+                <option value="International">International</option>
+            </select>
         </div>
         <div class="two-col">
             <div class="form-group">
@@ -1467,7 +1477,7 @@ async function renderOrders() {
               : (canEdit ? `<button class="btn btn-sm btn-outline" onclick="addTracking('${o.id}','')" style="font-size:0.73rem;padding:3px 8px">+ Add Link</button>` : '—')
             }
         </td>
-        <td>${o.stripeId ? `<a href="${stripeLinkBase}${o.stripeId}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:3px 8px">View ↗</a>` : '—'}</td>
+        <td>${o.shippingType || '—'}</td>
         <td>
             ${canEdit
                 ? `<select onchange="quickStatus('${o.id}',this.value)" style="${statusStyle[o.status]||''}">
@@ -1506,6 +1516,7 @@ function openAddOrderModal() {
     document.getElementById('ord-edit-id').value = '';
     ['ord-customer','ord-items','ord-total','ord-notes','ord-tracking'].forEach(f => document.getElementById(f).value = '');
     document.getElementById('ord-status').value = 'pending';
+    document.getElementById('ord-shipping-type').value = '';
     document.getElementById('ord-date').value = new Date().toISOString().split('T')[0];
     openModal('ord-modal');
 }
@@ -1519,8 +1530,9 @@ async function openEditOrderModal(id) {
     document.getElementById('ord-total').value      = o.total;
     document.getElementById('ord-status').value     = o.status;
     document.getElementById('ord-date').value       = o.date;
-    document.getElementById('ord-notes').value      = o.notes || '';
-    document.getElementById('ord-tracking').value   = o.tracking || '';
+    document.getElementById('ord-notes').value        = o.notes || '';
+    document.getElementById('ord-tracking').value     = o.tracking || '';
+    document.getElementById('ord-shipping-type').value = o.shippingType || '';
     openModal('ord-modal');
 }
 
@@ -1530,8 +1542,9 @@ async function saveOrder() {
     const total    = parseFloat(document.getElementById('ord-total').value);
     const status   = document.getElementById('ord-status').value;
     const date     = document.getElementById('ord-date').value;
-    const notes    = document.getElementById('ord-notes').value.trim();
-    const tracking = document.getElementById('ord-tracking').value.trim();
+    const notes        = document.getElementById('ord-notes').value.trim();
+    const tracking     = document.getElementById('ord-tracking').value.trim();
+    const shippingType = document.getElementById('ord-shipping-type').value;
 
     if (!customer || !items || isNaN(total) || !date) {
         alert('Please fill in all required fields (Customer, Items, Total, Date).');
@@ -1543,13 +1556,13 @@ async function saveOrder() {
 
     if (editId) {
         const idx = orders.findIndex(x => x.id === editId);
-        if (idx > -1) orders[idx] = { ...orders[idx], customer, items, total, status, date, notes, tracking };
+        if (idx > -1) orders[idx] = { ...orders[idx], customer, items, total, status, date, notes, tracking, shippingType };
     } else {
         // Generate a unique order ID
         const nums   = orders.map(o => parseInt(o.id.replace('QD-', '')) || 0);
         const nextNum = (Math.max(0, ...nums) + 1);
         const newId   = 'QD-' + String(nextNum).padStart(3, '0');
-        orders.push({ id: newId, customer, items, total, status, date, notes, tracking });
+        orders.push({ id: newId, customer, items, total, status, date, notes, tracking, shippingType });
     }
 
     await saveOrders(orders);
@@ -1586,7 +1599,6 @@ function renderFinishedOrders(allOrders, canEdit) {
     var stripeLinkBase = isLiveKey ? "https://dashboard.stripe.com/payments/" : "https://dashboard.stripe.com/test/payments/";
     tbody.innerHTML = finished.map(function(o) {
         var trackCell = o.tracking ? '<a href="' + o.tracking + '" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">Track</a>' : '&mdash;';
-        var stripeCell = o.stripeId ? '<a href="' + stripeLinkBase + o.stripeId + '" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.75rem;padding:3px 8px">View</a>' : '&mdash;';
         var actCell = canEdit ? '<button class="btn btn-sm btn-red" style="padding:3px 8px" onclick="deleteOrder(' + JSON.stringify(o.id) + ')">x</button>' : '&mdash;';
         return '<tr data-order-id="' + o.id + '">'
             + '<td><strong>' + o.id + '</strong></td>'
@@ -1596,7 +1608,7 @@ function renderFinishedOrders(allOrders, canEdit) {
             + '<td>' + (o.country || '&mdash;') + '</td>'
             + '<td>' + (o.shipping || '&mdash;') + '</td>'
             + '<td>' + trackCell + '</td>'
-            + '<td>' + stripeCell + '</td>'
+            + '<td>' + (o.shippingType || '&mdash;') + '</td>'
             + '<td><span class="badge badge-delivered">Delivered</span></td>'
             + '<td>' + (o.assignee || '&mdash;') + '</td>'
             + '<td>' + actCell + '</td>'
