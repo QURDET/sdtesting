@@ -867,6 +867,18 @@
 
                 </div>
 
+                <!-- EMAIL ALERTS SECTION -->
+                <div id="email-alerts-section" style="margin-top:36px">
+                    <div class="section-header"><h3>Email Alerts</h3></div>
+                    <div style="background:white;border-radius:16px;padding:24px;max-width:480px;box-shadow:0 2px 10px rgba(59,36,23,0.07)">
+                        <p style="color:#9B7B6E;font-size:0.85rem;margin-bottom:16px;line-height:1.6">Set the "from" address for low stock alert emails. Requires <code>RESEND_API_KEY</code> set as a Cloudflare environment variable.</p>
+                        <div class="form-group">
+                            <label>From Email Address</label>
+                            <input type="email" id="alert-from-email-input" placeholder="e.g. alerts@yourdomain.com" style="width:100%;box-sizing:border-box">
+                        </div>
+                        <button class="btn btn-purple" style="margin-top:8px" onclick="saveAlertFromEmail()">Save</button>
+                    </div>
+                </div>
 
             </div><!-- /page-content -->
         </div><!-- /main-content -->
@@ -903,6 +915,10 @@
         <div class="form-group">
             <label>Notes (optional)</label>
             <input type="text" id="inv-notes" placeholder="Any notes…">
+        </div>
+        <div class="form-group">
+            <label>Low Stock Alert Email (optional)</label>
+            <input type="email" id="inv-notify-email" placeholder="e.g. store@example.com">
         </div>
         <div class="modal-actions">
             <button class="btn btn-outline" onclick="closeModal('inv-modal')">Cancel</button>
@@ -1298,7 +1314,7 @@ async function renderInventory() {
     tbody.innerHTML = filtered.map(p => {
         const low = p.qty <= p.threshold;
         return `<tr>
-            <td><strong>${p.name}</strong>${p.notes ? `<br><small style="color:#9B7B6E">${p.notes}</small>` : ''}</td>
+            <td><strong>${p.name}</strong>${p.notes ? `<br><small style="color:#9B7B6E">${p.notes}</small>` : ''}${p.notifyEmail ? `<br><small style="color:#7B3F5E" title="Low stock alert: ${p.notifyEmail}">✉ ${p.notifyEmail}</small>` : ''}</td>
             <td style="color:#9B7B6E;font-family:monospace">${p.sku}</td>
             <td>£${parseFloat(p.price).toFixed(2)}</td>
             <td><strong>${p.qty}</strong></td>
@@ -1320,14 +1336,15 @@ async function openInvModal(id) {
     document.getElementById('inv-edit-id').value = id || '';
     if (editing) {
         const p = (await getInventory()).find(x => x.id === id);
-        document.getElementById('inv-name').value   = p.name;
-        document.getElementById('inv-sku').value    = p.sku;
-        document.getElementById('inv-price').value  = p.price;
-        document.getElementById('inv-qty').value    = p.qty;
-        document.getElementById('inv-thresh').value = p.threshold;
-        document.getElementById('inv-notes').value  = p.notes || '';
+        document.getElementById('inv-name').value         = p.name;
+        document.getElementById('inv-sku').value           = p.sku;
+        document.getElementById('inv-price').value         = p.price;
+        document.getElementById('inv-qty').value           = p.qty;
+        document.getElementById('inv-thresh').value        = p.threshold;
+        document.getElementById('inv-notes').value         = p.notes || '';
+        document.getElementById('inv-notify-email').value  = p.notifyEmail || '';
     } else {
-        ['inv-name','inv-sku','inv-price','inv-qty','inv-thresh','inv-notes'].forEach(f => document.getElementById(f).value = '');
+        ['inv-name','inv-sku','inv-price','inv-qty','inv-thresh','inv-notes','inv-notify-email'].forEach(f => document.getElementById(f).value = '');
     }
     openModal('inv-modal');
 }
@@ -1338,7 +1355,8 @@ async function saveProduct() {
     const price  = parseFloat(document.getElementById('inv-price').value);
     const qty    = parseInt(document.getElementById('inv-qty').value);
     const thresh = parseInt(document.getElementById('inv-thresh').value) || 5;
-    const notes  = document.getElementById('inv-notes').value.trim();
+    const notes       = document.getElementById('inv-notes').value.trim();
+    const notifyEmail = document.getElementById('inv-notify-email').value.trim();
 
     if (!name || !sku || isNaN(price) || isNaN(qty)) {
         alert('Please fill in all required fields (Name, SKU, Price, Quantity).');
@@ -1350,9 +1368,9 @@ async function saveProduct() {
 
     if (editId) {
         const idx = inv.findIndex(x => x.id === editId);
-        if (idx > -1) inv[idx] = { ...inv[idx], name, sku, price, qty, threshold: thresh, notes };
+        if (idx > -1) inv[idx] = { ...inv[idx], name, sku, price, qty, threshold: thresh, notes, notifyEmail };
     } else {
-        inv.push({ id: 'p' + Date.now(), name, sku, price, qty, threshold: thresh, notes });
+        inv.push({ id: 'p' + Date.now(), name, sku, price, qty, threshold: thresh, notes, notifyEmail });
     }
 
     await saveInventory(inv);
@@ -2028,6 +2046,33 @@ async function disconnectGoogle() {
 
 // Init Google Sign-In on page load
 loadGoogleSettings();
+
+// ─────────────────────────────────────────────
+// EMAIL ALERT SETTINGS
+// ─────────────────────────────────────────────
+async function loadAlertFromEmail() {
+    try {
+        const r = await fetch('/api/settings');
+        if (!r.ok) return;
+        const s = await r.json();
+        if (s.alertFromEmail) document.getElementById('alert-from-email-input').value = s.alertFromEmail;
+    } catch {}
+}
+
+async function saveAlertFromEmail() {
+    const email = document.getElementById('alert-from-email-input').value.trim();
+    try {
+        const r = await fetch('/api/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ alertFromEmail: email }),
+        });
+        if (r.ok) alert('Alert email saved.');
+        else alert('Failed to save.');
+    } catch { alert('Failed to save.'); }
+}
+
+loadAlertFromEmail();
 
 </script>
 
