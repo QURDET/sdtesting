@@ -1936,7 +1936,7 @@ async function loadStripe(){
             var dt=new Date(p.created*1000).toLocaleDateString('en-GB');
             var ch=(p.charges&&p.charges.data&&p.charges.data[0])||null;
             var bd=ch&&ch.billing_details||null;
-            var nm=(bd&&bd.name)||(p.metadata&&p.metadata.customer_name)||p.receipt_email||'—';
+            var nm=(p.shipping&&p.shipping.name)||(p.shipping&&p.shipping.address&&p.shipping.address.line1)||(bd&&bd.name)||(p.metadata&&p.metadata.customer_name)||p.receipt_email||'—';
             var em=(p.receipt_email&&p.receipt_email!==nm)?'<br><small style="color:#9B7B6E">'+p.receipt_email+'</small>':'';
             var country=(p.shipping&&p.shipping.address&&p.shipping.address.country)||(bd&&bd.address&&bd.address.country)||(p.metadata&&p.metadata.country)||'—';
             var amt=fmtAmt(p.amount_received||p.amount,p.currency);
@@ -1984,7 +1984,7 @@ async function syncStripeOrders(){
         newPays.forEach(function(p){
             var ch=(p.charges&&p.charges.data&&p.charges.data[0])||null;
             var bd=ch&&ch.billing_details||null;
-            var cust=(p.metadata&&p.metadata.customer_name)||(bd&&bd.name)||p.receipt_email||'Stripe Customer';
+            var cust=(p.shipping&&p.shipping.name)||(p.shipping&&p.shipping.address&&p.shipping.address.line1)||(bd&&bd.name)||(p.metadata&&p.metadata.customer_name)||p.receipt_email||'Stripe Customer';
             var country=(p.shipping&&p.shipping.address&&p.shipping.address.country)||(bd&&bd.address&&bd.address.country)||(p.metadata&&p.metadata.country)||'';
             var shipping=(p.shipping&&p.shipping.name)||(p.metadata&&p.metadata.shipping_method)||'';
             var amt=(p.amount_received||p.amount)/100;
@@ -2015,7 +2015,7 @@ async function importStripeOrder(piId){
         var nid='QD-'+String(nxt).padStart(3,'0');
         var ch=(pi.charges&&pi.charges.data&&pi.charges.data[0])||null;
         var bd=ch&&ch.billing_details||null;
-        var cust=(pi.metadata&&pi.metadata.customer_name)||(bd&&bd.name)||pi.receipt_email||'Stripe Customer';
+        var cust=(pi.shipping&&pi.shipping.name)||(pi.shipping&&pi.shipping.address&&pi.shipping.address.line1)||(bd&&bd.name)||(pi.metadata&&pi.metadata.customer_name)||pi.receipt_email||'Stripe Customer';
         var country=(pi.shipping&&pi.shipping.address&&pi.shipping.address.country)||(bd&&bd.address&&bd.address.country)||(pi.metadata&&pi.metadata.country)||'';
         var shipping=(pi.shipping&&pi.shipping.name)||(pi.metadata&&pi.metadata.shipping_method)||'';
         var amt=(pi.amount_received||pi.amount)/100;
