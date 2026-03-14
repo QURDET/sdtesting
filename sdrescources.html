@@ -303,8 +303,8 @@
         }
 
         /* ── Theme toggle ── */
-        .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 15px 0; display: block; width: 100%; text-align: left; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.15); }
-        .theme-toggle:hover { color: var(--gold); }
+        .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 6px 8px; border-radius: 8px; color: #ffffff; flex-shrink: 0; z-index: 1001; }
+        .theme-toggle:hover { background: rgba(255,255,255,0.15); }
 
         /* ── Dark mode ── */
         [data-theme="dark"] body { background: #1c1c1c; color: #e8d9c5; }
@@ -332,13 +332,15 @@
             <li><a href="shiadeal.html#preorder">Early Bird</a></li>
             <li><a href="shiadeal.html#faq">FAQ</a></li>
             <li><a href="contactus.html">Contact</a></li>
-            <li><button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button></li>
         </ul>
-        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
     </nav>
     <div class="nav-overlay" id="navOverlay"></div>
 
