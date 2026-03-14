@@ -25,6 +25,10 @@
     <!-- Google Fonts - loads the Poppins font from Google for use on the page -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ── Gold CSS variables: light mode = bright gold, dark mode = deep gold ── */
+        :root { --gold: #f5c430; --gold2: #f8d464; --gold-rgb: 245,196,48; }
+        [data-theme="dark"] { --gold: #c47f0a; --gold2: #c98a10; --gold-rgb: 196,127,10; }
+
         /* ============================================
            CUSTOM FONT
            Loads the Bely Display font file from your folder
@@ -200,7 +204,7 @@
             height: 200px;
             border-radius: 20px;
             object-fit: cover;
-            box-shadow: 0 20px 60px rgba(242, 161, 31, 0.4);
+            box-shadow: 0 20px 60px rgba(var(--gold-rgb), 0.4);
             margin-bottom: 2rem;
             animation: pulse 2s ease-in-out infinite;
         }
@@ -211,16 +215,13 @@
             50% { transform: scale(1.05); }
         }
 
-        /* Hero title with gradient text effect (dark to gold) */
+        /* Hero title - solid gold */
         .hero h1 {
             font-family: 'Bely Display', serif;
             font-size: 4rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(90deg, #333333, #f2a11f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--gold);
         }
 
         .hero p {
@@ -257,26 +258,26 @@
 
         /* Gold filled button */
         .btn-primary {
-            background: linear-gradient(90deg, #f2a11f, #f5b942);
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
             color: white;
-            box-shadow: 0 10px 30px rgba(242, 161, 31, 0.4);
+            box-shadow: 0 10px 30px rgba(var(--gold-rgb), 0.4);
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(242, 161, 31, 0.5);
+            box-shadow: 0 15px 40px rgba(var(--gold-rgb), 0.5);
         }
 
         /* Gold outline button (transparent background) */
         .btn-secondary {
             background: transparent;
-            color: #f2a11f;
-            border: 2px solid #f2a11f;
+            color: var(--gold);
+            border: 2px solid var(--gold);
         }
 
         .btn-secondary:hover {
-            background: rgba(242, 161, 31, 0.1);
-            color: #f5b942;
+            background: rgba(var(--gold-rgb), 0.1);
+            color: var(--gold2);
             transform: translateY(-3px);
         }
 
@@ -342,8 +343,8 @@
         .about-card:hover {
             transform: translateY(-10px);
             background: #ffffff;
-            border-color: #f2a11f;
-            box-shadow: 0 15px 40px rgba(242, 161, 31, 0.15);
+            border-color: var(--gold);
+            box-shadow: 0 15px 40px rgba(var(--gold-rgb), 0.15);
         }
 
         .about-icon {
@@ -355,7 +356,7 @@
             font-family: 'Bely Display', serif;
             font-size: 1.4rem;
             margin-bottom: 1rem;
-            color: #f2a11f;
+            color: var(--gold);
         }
 
         .about-card p {
@@ -368,7 +369,7 @@
            Displays the rules image and Explore the Sites pages
            ============================================ */
         #resources {
-            background: linear-gradient(180deg, rgba(242, 161, 31, 0.08) 0%, #ffffff 100%);
+            background: linear-gradient(180deg, rgba(var(--gold-rgb), 0.08) 0%, #ffffff 100%);
         }
 
         .resources-main-image {
@@ -402,7 +403,7 @@
 
         .resource-item:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 50px rgba(242, 161, 31, 0.25);
+            box-shadow: 0 20px 50px rgba(var(--gold-rgb), 0.25);
         }
 
         .resource-item img {
@@ -451,15 +452,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            border: 2px solid rgba(242, 161, 31, 0.3);
+            border: 2px solid rgba(var(--gold-rgb), 0.3);
             transition: all 0.4s ease;
             cursor: pointer;
         }
 
         .card-preview:hover {
             transform: translateY(-10px);
-            border-color: #f2a11f;
-            box-shadow: 0 20px 40px rgba(242, 161, 31, 0.3);
+            border-color: var(--gold);
+            box-shadow: 0 20px 40px rgba(var(--gold-rgb), 0.3);
         }
 
         .card-preview .suit {
@@ -470,7 +471,7 @@
         .card-preview .card-name {
             font-family: 'Bely Display', serif;
             font-size: 1.1rem;
-            color: #f2a11f;
+            color: var(--gold);
             margin-top: 0.8rem;
             font-weight: 600;
         }
@@ -513,7 +514,7 @@
         .preorder-image img {
             width: 100%;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(242, 161, 31, 0.4);
+            box-shadow: 0 20px 60px rgba(var(--gold-rgb), 0.4);
             transition: transform 0.3s ease;
         }
 
@@ -543,7 +544,7 @@
             transform: translateY(-50%);
             width: 36px;
             height: 36px;
-            background: rgba(242, 161, 31, 0.85);
+            background: rgba(var(--gold-rgb), 0.85);
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -557,7 +558,7 @@
         }
 
         .slide-arrow:hover {
-            background: #f2a11f;
+            background: var(--gold);
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -590,7 +591,7 @@
 
         /* Active dot is gold and slightly bigger */
         .slide-dot.active {
-            background: #f2a11f;
+            background: var(--gold);
             transform: scale(1.2);
         }
 
@@ -610,7 +611,7 @@
         .preorder-details .price {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #f2a11f;
+            color: var(--gold);
             margin-bottom: 1rem;
         }
 
@@ -636,7 +637,7 @@
 
         .preorder-features li::before {
             content: '✓';
-            color: #f2a11f;
+            color: var(--gold);
             font-weight: 700;
         }
 
@@ -650,7 +651,7 @@
 
         .quantity-selector label {
             font-family: 'Bely Display', serif;
-            color: #f2a11f;
+            color: var(--gold);
         }
 
         .quantity-controls {
@@ -662,9 +663,9 @@
         .quantity-btn {
             width: 40px;
             height: 40px;
-            border: 2px solid #f2a11f;
+            border: 2px solid var(--gold);
             background: transparent;
-            color: #f2a11f;
+            color: var(--gold);
             font-size: 1.5rem;
             border-radius: 8px;
             cursor: pointer;
@@ -675,7 +676,7 @@
         }
 
         .quantity-btn:hover {
-            background: #f2a11f;
+            background: var(--gold);
             color: white;
         }
 
@@ -694,7 +695,7 @@
         .checkout-btn {
             width: 100%;
             padding: 18px 40px;
-            background: linear-gradient(90deg, #f2a11f, #f5b942);
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
             border: none;
             border-radius: 12px;
             color: white;
@@ -703,12 +704,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(242, 161, 31, 0.4);
+            box-shadow: 0 10px 30px rgba(var(--gold-rgb), 0.4);
         }
 
         .checkout-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(242, 161, 31, 0.5);
+            box-shadow: 0 15px 40px rgba(var(--gold-rgb), 0.5);
         }
 
         .checkout-btn:disabled {
@@ -730,7 +731,7 @@
         .secure-badge svg {
             width: 16px;
             height: 16px;
-            fill: #f2a11f;
+            fill: var(--gold);
         }
 
         /* ============================================
@@ -773,7 +774,7 @@
         }
 
         .promo-banner .code {
-            background: #f2a11f;
+            background: var(--gold);
             color: #333333;
             padding: 2px 10px;
             border-radius: 4px;
@@ -785,7 +786,7 @@
 
         /* Gold promo banner inside the preorder section (repeats the discount code) */
         .promo-preorder {
-            background: linear-gradient(90deg, #f2a11f, #f5b942);
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
             color: #333333;
             text-align: center;
             padding: 14px 5%;
@@ -857,7 +858,7 @@
         }
 
         .social-links a:hover {
-            background: #f2a11f;
+            background: var(--gold);
             transform: translateY(-5px);
         }
 
@@ -892,7 +893,7 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(242, 161, 31, 0.4);
+            border: 2px solid rgba(var(--gold-rgb), 0.4);
         }
 
         .credit-item span {
@@ -901,7 +902,7 @@
         }
 
         .credit-item .credit-name {
-            color: #f2a11f;
+            color: var(--gold);
             font-weight: 600;
         }
 
@@ -987,7 +988,7 @@
         }
 
         .faq-item:hover {
-            border-color: #f2a11f;
+            border-color: var(--gold);
         }
 
         .faq-question {
@@ -1009,7 +1010,7 @@
 
         .faq-question .arrow {
             font-size: 0.8rem;
-            color: #f2a11f;
+            color: var(--gold);
             transition: transform 0.3s ease;
             flex-shrink: 0;
         }
@@ -1131,10 +1132,10 @@
         }
 
         .country-btn:hover {
-            border-color: #f2a11f;
+            border-color: var(--gold);
             background: #fff8ee;
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(242, 161, 31, 0.2);
+            box-shadow: 0 8px 20px rgba(var(--gold-rgb), 0.2);
         }
 
         .country-flag {
@@ -1212,6 +1213,13 @@
         .theme-toggle:hover { background: rgba(255,255,255,0.15); }
 
         /* ── Dark mode ── */
+        [data-theme="dark"] .hero h1 {
+            color: transparent;
+            background: linear-gradient(90deg, #1a1310, #f5c430);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         [data-theme="dark"] body { background: #1c1c1c; color: #e8d9c5; }
         [data-theme="dark"] #about { background: #242424; }
         [data-theme="dark"] .about-card { background: #2e2e2e; border-color: #3e3e3e; }
@@ -1227,15 +1235,15 @@
         [data-theme="dark"] .faq-item { background: #2e2e2e; border-color: #3e3e3e; }
         [data-theme="dark"] .faq-question { color: #e8d9c5; }
         [data-theme="dark"] .faq-answer p { color: #a09080; }
-        [data-theme="dark"] .card-preview { background: #2e2e2e; border-color: rgba(242,161,31,0.2); }
+        [data-theme="dark"] .card-preview { background: #2e2e2e; border-color: rgba(var(--gold-rgb),0.2); }
         [data-theme="dark"] .card-preview .card-desc { color: #a09080; }
-        [data-theme="dark"] #resources { background: linear-gradient(180deg, rgba(242,161,31,0.05) 0%, #1c1c1c 100%); }
+        [data-theme="dark"] #resources { background: linear-gradient(180deg, rgba(var(--gold-rgb),0.05) 0%, #1c1c1c 100%); }
         [data-theme="dark"] #rules { background: linear-gradient(180deg, #1c1c1c 0%, #242424 100%); }
         [data-theme="dark"] .country-modal { background: #2e2e2e; }
         [data-theme="dark"] .country-modal h3 { color: #e8d9c5; }
         [data-theme="dark"] .country-modal p { color: #a09080; }
         [data-theme="dark"] .country-btn { background: #3a3a3a; border-color: #4a4a4a; }
-        [data-theme="dark"] .country-btn:hover { background: #3e3220; border-color: #f2a11f; }
+        [data-theme="dark"] .country-btn:hover { background: #3e3220; border-color: var(--gold); }
         [data-theme="dark"] .country-label { color: #e8d9c5; }
         [data-theme="dark"] .slide-dot { background: #4a4a4a; }
         [data-theme="dark"] nav { background: rgba(110, 72, 5, 0.98); }
@@ -1363,7 +1371,7 @@
                 <span class="card-desc">Used to pay debts when opponents play action cards against you</span>
             </div>
             <div class="card-preview">
-                <span class="suit" style="color: #f2a11f;">🏡</span>
+                <span class="suit" style="color: var(--gold);">🏡</span>
                 <span class="card-name">House/Well</span>
                 <span class="card-desc">Place on a complete set to increase its value. Cannot use on train stations (Black set)</span>
             </div>
@@ -1508,7 +1516,7 @@
                 </button>
             </div>
             <p style="margin-top: 1.2rem; font-size: 0.85rem; color: #888; text-align: center;">
-                Ordering from another country? Email us at <a href="mailto:qurandetectives@gmail.com" style="color: #f2a11f;">qurandetectives@gmail.com</a>
+                Ordering from another country? Email us at <a href="mailto:qurandetectives@gmail.com" style="color: var(--gold);">qurandetectives@gmail.com</a>
             </p>
         </div>
     </div>

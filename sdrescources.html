@@ -9,6 +9,10 @@
     <link rel="icon" type="image/jpeg" href="SDlogo.jpeg">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ── Gold CSS variables: light mode = bright gold, dark mode = deep gold ── */
+        :root { --gold: #f5c430; --gold2: #f8d464; --gold-rgb: 245,196,48; }
+        [data-theme="dark"] { --gold: #c47f0a; --gold2: #c98a10; --gold-rgb: 196,127,10; }
+
         @font-face {
             font-family: 'Bely Display';
             src: url('Bely Display.ttf') format('truetype');
@@ -137,7 +141,7 @@
         .page-header {
             padding: 140px 5% 60px;
             text-align: center;
-            background: linear-gradient(180deg, rgba(242, 161, 31, 0.08) 0%, #ffffff 100%);
+            background: linear-gradient(180deg, rgba(var(--gold-rgb), 0.08) 0%, #ffffff 100%);
         }
 
         .page-header h1 {
@@ -211,7 +215,7 @@
 
         .site-item:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 50px rgba(242, 161, 31, 0.25);
+            box-shadow: 0 20px 50px rgba(var(--gold-rgb), 0.25);
         }
 
         .site-item img {
@@ -260,7 +264,7 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .social-links a:hover { background: #f2a11f; transform: translateY(-5px); }
+        .social-links a:hover { background: var(--gold); transform: translateY(-5px); }
 
         .copyright { color: #a0a0a0; font-size: 0.9rem; }
 
@@ -287,11 +291,11 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(242, 161, 31, 0.4);
+            border: 2px solid rgba(var(--gold-rgb), 0.4);
         }
 
         .credit-item span { color: #a0a0a0; font-size: 0.8rem; }
-        .credit-item .credit-name { color: #f2a11f; font-weight: 600; }
+        .credit-item .credit-name { color: var(--gold); font-weight: 600; }
 
         @media (max-width: 768px) {
             .page-header h1 { font-size: 2.2rem; }
@@ -300,11 +304,11 @@
 
         /* ── Theme toggle ── */
         .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 15px 0; display: block; width: 100%; text-align: left; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.15); }
-        .theme-toggle:hover { color: #f2a11f; }
+        .theme-toggle:hover { color: var(--gold); }
 
         /* ── Dark mode ── */
         [data-theme="dark"] body { background: #1c1c1c; color: #e8d9c5; }
-        [data-theme="dark"] .page-header { background: linear-gradient(180deg, rgba(242,161,31,0.05) 0%, #1c1c1c 100%); }
+        [data-theme="dark"] .page-header { background: linear-gradient(180deg, rgba(var(--gold-rgb),0.05) 0%, #1c1c1c 100%); }
         [data-theme="dark"] .page-header h1 { color: #e8d9c5; }
         [data-theme="dark"] .page-header p { color: #a09080; }
         [data-theme="dark"] .section-title { color: #e8d9c5; }
@@ -378,16 +382,16 @@
             align-items: center;
             gap: 0.6rem;
             padding: 15px 40px;
-            background: linear-gradient(90deg, #f2a11f, #f5b942);
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
             color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
             font-size: 1rem;
             font-weight: 600;
-            box-shadow: 0 10px 30px rgba(242, 161, 31, 0.4);
+            box-shadow: 0 10px 30px rgba(var(--gold-rgb), 0.4);
             transition: all 0.3s ease;
-        " onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 15px 40px rgba(242,161,31,0.5)'"
-           onmouseout="this.style.transform='';this.style.boxShadow='0 10px 30px rgba(242,161,31,0.4)'">
+        " onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 15px 40px rgba(var(--gold-rgb),0.5)'"
+           onmouseout="this.style.transform='';this.style.boxShadow='0 10px 30px rgba(var(--gold-rgb),0.4)'">
             ← Back to Shia Deal
         </a>
     </div>
