@@ -1011,6 +1011,10 @@
             <input type="date" id="ord-date">
         </div>
         <div class="form-group">
+            <label>Country (optional)</label>
+            <input type="text" id="ord-country" placeholder="e.g. United Kingdom">
+        </div>
+        <div class="form-group">
             <label>Notes (optional)</label>
             <input type="text" id="ord-notes" placeholder="Any notes…">
         </div>
@@ -1528,7 +1532,7 @@ async function renderOrders() {
         <td>${o.items}</td>
         <td>£${parseFloat(o.total).toFixed(2)}</td>
         <td>${o.country || '—'}</td>
-        <td>${o.shipping || '—'}</td>
+        <td>${o.customer || '—'}</td>
         <td>
             ${o.tracking
               ? `<span style="display:flex;align-items:center;gap:4px">
@@ -1575,7 +1579,7 @@ async function quickStatus(id, status) {
 function openAddOrderModal() {
     document.getElementById('ord-modal-title').textContent = 'Add Order';
     document.getElementById('ord-edit-id').value = '';
-    ['ord-customer','ord-items','ord-total','ord-notes','ord-tracking','ord-stripe-id'].forEach(f => document.getElementById(f).value = '');
+    ['ord-customer','ord-items','ord-total','ord-country','ord-notes','ord-tracking','ord-stripe-id'].forEach(f => document.getElementById(f).value = '');
     document.getElementById('ord-status').value = 'pending';
     document.getElementById('ord-shipping-type').value = '';
     document.getElementById('ord-date').value = new Date().toISOString().split('T')[0];
@@ -1591,6 +1595,7 @@ async function openEditOrderModal(id) {
     document.getElementById('ord-total').value      = o.total;
     document.getElementById('ord-status').value     = o.status;
     document.getElementById('ord-date').value       = o.date;
+    document.getElementById('ord-country').value      = o.country || '';
     document.getElementById('ord-notes').value        = o.notes || '';
     document.getElementById('ord-tracking').value     = o.tracking || '';
     document.getElementById('ord-stripe-id').value    = o.stripeId || '';
@@ -1604,6 +1609,7 @@ async function saveOrder() {
     const total    = parseFloat(document.getElementById('ord-total').value);
     const status   = document.getElementById('ord-status').value;
     const date     = document.getElementById('ord-date').value;
+    const country      = document.getElementById('ord-country').value.trim();
     const notes        = document.getElementById('ord-notes').value.trim();
     const tracking     = document.getElementById('ord-tracking').value.trim();
     const stripeId     = document.getElementById('ord-stripe-id').value.trim();
@@ -1619,13 +1625,13 @@ async function saveOrder() {
 
     if (editId) {
         const idx = orders.findIndex(x => x.id === editId);
-        if (idx > -1) orders[idx] = { ...orders[idx], customer, items, total, status, date, notes, tracking, stripeId, shippingType };
+        if (idx > -1) orders[idx] = { ...orders[idx], customer, items, total, status, date, country, notes, tracking, stripeId, shippingType };
     } else {
         // Generate a unique order ID
         const nums   = orders.map(o => parseInt(o.id.replace('QD-', '')) || 0);
         const nextNum = (Math.max(0, ...nums) + 1);
         const newId   = 'QD-' + String(nextNum).padStart(3, '0');
-        orders.push({ id: newId, customer, items, total, status, date, notes, tracking, stripeId, shippingType });
+        orders.push({ id: newId, customer, items, total, status, date, country, notes, tracking, stripeId, shippingType });
     }
 
     await saveOrders(orders);
@@ -1670,7 +1676,7 @@ function renderFinishedOrders(allOrders, canEdit) {
             + '<td>' + o.items + '</td>'
             + '<td>&pound;' + parseFloat(o.total).toFixed(2) + '</td>'
             + '<td>' + (o.country || '&mdash;') + '</td>'
-            + '<td>' + (o.shipping || '&mdash;') + '</td>'
+            + '<td>' + (o.customer || '&mdash;') + '</td>'
             + '<td>' + trackCell + '</td>'
             + '<td>' + (o.shippingType || '&mdash;') + '</td>'
             + '<td><span class="badge badge-delivered">Delivered</span></td>'
