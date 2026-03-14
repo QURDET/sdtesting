@@ -232,6 +232,41 @@
             margin-top: -15px; /* pull arrow closer to the text above */
         }
 
+        /* ── Interest button ── */
+        .btn-interest {
+            display: inline-block;
+            padding: 14px 36px;
+            background: #3B2417;
+            color: #ffffff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 36, 23, 0.25);
+        }
+
+        .btn-interest:hover {
+            background: #5C4033;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 36, 23, 0.35);
+        }
+
+        .btn-interest:active {
+            transform: scale(0.97);
+        }
+
+        [data-theme="dark"] .btn-interest {
+            background: #C8A882;
+            color: #1a1310;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        [data-theme="dark"] .btn-interest:hover {
+            background: #D4B896;
+        }
+
         /* ── Footer: simple copyright bar at the bottom ── */
         footer {
             text-align: center;
@@ -295,6 +330,115 @@
             }
         }
 
+        /* ── Popup overlay ── */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-overlay.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .popup-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 36px 32px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .popup-box .popup-icon {
+            font-size: 2.6rem;
+            margin-bottom: 16px;
+        }
+
+        .popup-box h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #3B2417;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .popup-box p {
+            font-size: 0.9rem;
+            color: #7A6050;
+            margin-bottom: 28px;
+        }
+
+        .popup-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .popup-btn-yes {
+            padding: 12px 28px;
+            background: #3B2417;
+            color: #ffffff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        .popup-btn-yes:hover {
+            background: #5C4033;
+            transform: translateY(-2px);
+        }
+
+        .popup-btn-no {
+            padding: 12px 28px;
+            background: transparent;
+            color: #7A6050;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: 2px solid #E8D5C4;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .popup-btn-no:hover {
+            border-color: #9E8071;
+            color: #3B2417;
+        }
+
+        [data-theme="dark"] .popup-box { background: #241b14; }
+        [data-theme="dark"] .popup-box h2 { color: #EFE0CE; }
+        [data-theme="dark"] .popup-box p { color: #9E8071; }
+        [data-theme="dark"] .popup-btn-yes { background: #C8A882; color: #1a1310; }
+        [data-theme="dark"] .popup-btn-yes:hover { background: #D4B896; }
+        [data-theme="dark"] .popup-btn-no { border-color: #4a3020; color: #9E8071; }
+        [data-theme="dark"] .popup-btn-no:hover { border-color: #7A6050; color: #EFE0CE; }
+
         /* ── Theme toggle ── */
         .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 2px 6px; border-radius: 6px; flex-shrink: 0; }
         .theme-toggle:hover { opacity: 0.7; }
@@ -313,6 +457,19 @@
     </style>
 </head>
 <body>
+
+    <!-- ── Interest popup ── -->
+    <div class="popup-overlay" id="interestPopup">
+        <div class="popup-box">
+            <div class="popup-icon">📖</div>
+            <h2>Interested in Qur'an Classes for Children Aged 5–14?</h2>
+            <p>Register your interest and we'll be in touch with more details!</p>
+            <div class="popup-actions">
+                <a href="interestform.html" class="popup-btn-yes">Yes, Register!</a>
+                <button class="popup-btn-no" onclick="closePopup()">Not Now</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ── Navigation bar: logo on left, links on right, hamburger for mobile ── -->
     <nav>
@@ -350,6 +507,9 @@
                 <span class="arrow">&#8593;</span>
                 <span class="text">Press here for something cool!</span>
             </div>
+
+            <!-- Interest form button -->
+            <a href="interestform.html" class="btn-interest">Register Interest in Qur'an Classes for Children Aged 5–14</a>
         </div>
     </section>
 
@@ -360,6 +520,12 @@
     </footer>
 
     <script>
+        function closePopup() {
+            document.getElementById('interestPopup').classList.add('hidden');
+        }
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('interestPopup').classList.remove('hidden');
+        });
         function toggleMenu() {
             document.getElementById('navLinks').classList.toggle('active');
             document.querySelector('.hamburger').classList.toggle('active');

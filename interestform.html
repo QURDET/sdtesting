@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){var s=localStorage.getItem('qdTheme');if(s==='dark'||(s===null&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}());</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Your Interest - Qur'an Detectives</title>
+
+    <meta name="description" content="Register your interest in Qur'an Detectives sessions and programmes.">
+    <link rel="icon" type="image/jpeg" href="qdlogo.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #FAF6F1;
+            color: #3B2417;
+            min-height: 100vh;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(59, 36, 23, 0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-brand img {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .nav-brand span {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #3B2417;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'Nunito', sans-serif;
+            color: #5C4033;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #7B3F5E;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background: #3B2417;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+        /* ── Page header ── */
+        .page-header {
+            background: linear-gradient(135deg, #F5E8D6 0%, #EFE0CE 40%, #E8D5C4 100%);
+            padding: 140px 5% 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(123, 63, 94, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(107, 123, 141, 0.06) 0%, transparent 50%);
+        }
+
+        .page-header .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #3B2417;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+        }
+
+        .page-header p {
+            font-size: 1.05rem;
+            color: #5C4033;
+            font-weight: 400;
+        }
+
+        /* ── Form section ── */
+        .form-section {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 5% 80px;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 44px;
+            box-shadow: 0 4px 20px rgba(59, 36, 23, 0.08);
+        }
+
+        .form-card h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #3B2417;
+            margin-bottom: 6px;
+        }
+
+        .form-card .subtitle {
+            font-size: 0.9rem;
+            color: #7A6050;
+            margin-bottom: 28px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #5C4033;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            color: #3B2417;
+            background: #FAF6F1;
+            border: 1.5px solid #E8D5C4;
+            border-radius: 10px;
+            padding: 12px 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            resize: none;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235C4033' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 38px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #7B3F5E;
+            box-shadow: 0 0 0 3px rgba(123, 63, 94, 0.1);
+        }
+
+        .form-group textarea {
+            height: 120px;
+        }
+
+        .btn-submit {
+            margin-top: 24px;
+            width: 100%;
+            padding: 14px;
+            background: #3B2417;
+            color: #ffffff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        .btn-submit:hover {
+            background: #5C4033;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-status {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .form-status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .form-status.error {
+            background: #fdecea;
+            color: #c62828;
+            display: block;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: #ffffff;
+            color: #6B5B4F;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0; right: 0;
+                width: 260px;
+                height: 100vh;
+                background: #ffffff;
+                flex-direction: column;
+                padding: 80px 30px 30px;
+                gap: 1.5rem;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+                z-index: 999;
+            }
+
+            .nav-links.active { display: flex; }
+
+            .hamburger {
+                display: flex;
+                z-index: 1001;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+
+            .form-card {
+                padding: 28px 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: 1; }
+        }
+
+        /* ── Theme toggle ── */
+        .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 2px 6px; border-radius: 6px; flex-shrink: 0; }
+        .theme-toggle:hover { opacity: 0.7; }
+
+        /* ── Dark mode ── */
+        [data-theme="dark"] body { background: #1a1310; color: #EFE0CE; }
+        [data-theme="dark"] nav { background: #241b14; box-shadow: 0 2px 15px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .nav-brand span { color: #EFE0CE; }
+        [data-theme="dark"] .nav-links { background: #241b14; }
+        [data-theme="dark"] .nav-links a { color: #C8A882; }
+        [data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active { color: #D4899E; }
+        [data-theme="dark"] .hamburger span { background: #EFE0CE; }
+        [data-theme="dark"] .page-header { background: linear-gradient(135deg, #2a1f16 0%, #201610 40%, #1a1310 100%); }
+        [data-theme="dark"] .page-header h1 { color: #EFE0CE; }
+        [data-theme="dark"] .page-header p { color: #C8A882; }
+        [data-theme="dark"] .form-card { background: #241b14; }
+        [data-theme="dark"] .form-card h2 { color: #EFE0CE; }
+        [data-theme="dark"] .form-card .subtitle { color: #9E8071; }
+        [data-theme="dark"] .form-group label { color: #C8A882; }
+        [data-theme="dark"] .form-group input,
+        [data-theme="dark"] .form-group select,
+        [data-theme="dark"] .form-group textarea { background: #1a1310; border-color: #4a3020; color: #EFE0CE; }
+        [data-theme="dark"] footer { background: #241b14; color: #9E8071; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a class="nav-brand" href="index.html">
+            <img src="qdlogo.jpg" alt="Qur'an Detectives Logo">
+            <span>Qur'an Detectives</span>
+        </a>
+        <button class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="shiadeal.html">Shia Deal</a></li>
+            <li><a href="contactus.html">Contact</a></li>
+            <li><button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button></li>
+        </ul>
+    </nav>
+
+    <div class="page-header">
+        <div class="content">
+            <h1>Register Your Interest</h1>
+            <p>Let us know you're interested and we'll be in touch!</p>
+        </div>
+    </div>
+
+    <section class="form-section">
+        <div class="form-card">
+            <h2>Interest Form</h2>
+            <p class="subtitle">Fill in your details below and we'll reach out with more information.</p>
+
+            <form id="interest-form" onsubmit="submitForm(event)">
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="if-parent-name">Parent / Guardian Name</label>
+                        <input type="text" id="if-parent-name" placeholder="e.g. Fatima Ali" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="if-email">Email Address</label>
+                        <input type="email" id="if-email" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="if-phone">Phone / WhatsApp</label>
+                        <input type="tel" id="if-phone" placeholder="e.g. 07123 456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="if-child-name">Child's Name</label>
+                        <input type="text" id="if-child-name" placeholder="e.g. Hussain Ali" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="if-child-age">Child's Age</label>
+                        <input type="number" id="if-child-age" placeholder="e.g. 8" min="3" max="18" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="if-message">Anything else you'd like us to know?</label>
+                        <textarea id="if-message" placeholder="Any questions, availability, or additional details…"></textarea>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-submit" id="if-submit">Submit Interest</button>
+                <div class="form-status" id="if-status"></div>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Qur'an Detectives. All rights reserved.</p>
+        <a href="admin.html" style="display:inline-block;margin-top:12px;padding:7px 18px;background:#3B2417;color:#fff;border-radius:8px;font-family:'Poppins',sans-serif;font-size:0.8rem;font-weight:600;text-decoration:none;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Staff</a>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+            document.querySelector('.hamburger').classList.toggle('active');
+        }
+        function toggleTheme() {
+            var d = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (d) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('qdTheme', 'light'); }
+            else   { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('qdTheme', 'dark'); }
+            updateThemeBtn();
+        }
+        function updateThemeBtn() {
+            var b = document.getElementById('theme-toggle');
+            if (b) b.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (!localStorage.getItem('qdTheme')) {
+                if (e.matches) document.documentElement.setAttribute('data-theme', 'dark');
+                else document.documentElement.removeAttribute('data-theme');
+                updateThemeBtn();
+            }
+        });
+        document.addEventListener('DOMContentLoaded', updateThemeBtn);
+
+        async function submitForm(e) {
+            e.preventDefault();
+            const btn    = document.getElementById('if-submit');
+            const status = document.getElementById('if-status');
+            btn.disabled = true;
+            btn.textContent = 'Submitting…';
+            status.className = 'form-status';
+            status.textContent = '';
+
+            const body = {
+                parentName: document.getElementById('if-parent-name').value.trim(),
+                email:      document.getElementById('if-email').value.trim(),
+                phone:      document.getElementById('if-phone').value.trim(),
+                childName:  document.getElementById('if-child-name').value.trim(),
+                childAge:   document.getElementById('if-child-age').value.trim(),
+                interest:   document.getElementById('if-interest').value,
+                message:    document.getElementById('if-message').value.trim(),
+            };
+
+            try {
+                const r = await fetch('/api/interest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                if (r.ok) {
+                    status.className = 'form-status success';
+                    status.textContent = 'Thank you! We\'ve received your interest and will be in touch soon.';
+                    document.getElementById('interest-form').reset();
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch {
+                status.className = 'form-status error';
+                status.textContent = 'Something went wrong. Please try again or contact us directly.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Submit Interest';
+            }
+        }
+    </script>
+
+</body>
+</html>
