@@ -770,7 +770,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th>Stripe</th>
                                     <th>Date</th>
                                     <th>Order type</th>
                                     <th>Total</th>
@@ -793,7 +793,7 @@
                         <div class="section-header" style="margin-top:4px"><h3>Finished Orders</h3></div>
                         <div class="table-card">
                             <table>
-                                <thead><tr><th>Order ID</th><th>Date</th><th>Order type</th><th>Total</th><th>Country</th><th>Customer Name</th><th>Track</th><th>Shipping Type</th><th>Status</th><th>Assigned</th><th>Actions</th></tr></thead>
+                                <thead><tr><th>Stripe</th><th>Date</th><th>Order type</th><th>Total</th><th>Country</th><th>Customer Name</th><th>Track</th><th>Shipping Type</th><th>Status</th><th>Assigned</th><th>Actions</th></tr></thead>
                                 <tbody id="finished-tbody"></tbody>
                             </table>
                         </div>
@@ -1017,6 +1017,10 @@
         <div class="form-group">
             <label>Tracking Link (optional)</label>
             <input type="url" id="ord-tracking" placeholder="https://track.royalmail.com/…">
+        </div>
+        <div class="form-group">
+            <label>Stripe Payment ID (optional)</label>
+            <input type="text" id="ord-stripe-id" placeholder="e.g. pi_3ABC… or ch_3ABC…">
         </div>
         <div class="modal-actions">
             <button class="btn btn-outline" onclick="closeModal('ord-modal')">Cancel</button>
@@ -1516,7 +1520,10 @@ async function renderOrders() {
     renderFinishedOrders(_orders, canEdit);
 
     tbody.innerHTML = filtered.map(o => `<tr data-order-id="${o.id}">
-        <td><strong>${o.id}</strong></td>
+        <td>${o.stripeId
+            ? `<a href="${stripeLinkBase}${o.stripeId}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">View ↗</a>`
+            : (canEdit ? `<button class="btn btn-sm btn-outline" onclick="openEditOrderModal('${o.id}')" style="font-size:0.73rem;padding:3px 8px">+ Add</button>` : '—')
+        }</td>
         <td>${o.date}</td>
         <td>${o.items}</td>
         <td>£${parseFloat(o.total).toFixed(2)}</td>
@@ -1568,7 +1575,7 @@ async function quickStatus(id, status) {
 function openAddOrderModal() {
     document.getElementById('ord-modal-title').textContent = 'Add Order';
     document.getElementById('ord-edit-id').value = '';
-    ['ord-customer','ord-items','ord-total','ord-notes','ord-tracking'].forEach(f => document.getElementById(f).value = '');
+    ['ord-customer','ord-items','ord-total','ord-notes','ord-tracking','ord-stripe-id'].forEach(f => document.getElementById(f).value = '');
     document.getElementById('ord-status').value = 'pending';
     document.getElementById('ord-shipping-type').value = '';
     document.getElementById('ord-date').value = new Date().toISOString().split('T')[0];
@@ -1586,6 +1593,7 @@ async function openEditOrderModal(id) {
     document.getElementById('ord-date').value       = o.date;
     document.getElementById('ord-notes').value        = o.notes || '';
     document.getElementById('ord-tracking').value     = o.tracking || '';
+    document.getElementById('ord-stripe-id').value    = o.stripeId || '';
     document.getElementById('ord-shipping-type').value = o.shippingType || '';
     openModal('ord-modal');
 }
@@ -1598,6 +1606,7 @@ async function saveOrder() {
     const date     = document.getElementById('ord-date').value;
     const notes        = document.getElementById('ord-notes').value.trim();
     const tracking     = document.getElementById('ord-tracking').value.trim();
+    const stripeId     = document.getElementById('ord-stripe-id').value.trim();
     const shippingType = document.getElementById('ord-shipping-type').value;
 
     if (!customer || !items || isNaN(total) || !date) {
@@ -1610,13 +1619,13 @@ async function saveOrder() {
 
     if (editId) {
         const idx = orders.findIndex(x => x.id === editId);
-        if (idx > -1) orders[idx] = { ...orders[idx], customer, items, total, status, date, notes, tracking, shippingType };
+        if (idx > -1) orders[idx] = { ...orders[idx], customer, items, total, status, date, notes, tracking, stripeId, shippingType };
     } else {
         // Generate a unique order ID
         const nums   = orders.map(o => parseInt(o.id.replace('QD-', '')) || 0);
         const nextNum = (Math.max(0, ...nums) + 1);
         const newId   = 'QD-' + String(nextNum).padStart(3, '0');
-        orders.push({ id: newId, customer, items, total, status, date, notes, tracking, shippingType });
+        orders.push({ id: newId, customer, items, total, status, date, notes, tracking, stripeId, shippingType });
     }
 
     await saveOrders(orders);
@@ -1654,8 +1663,9 @@ function renderFinishedOrders(allOrders, canEdit) {
     tbody.innerHTML = finished.map(function(o) {
         var trackCell = o.tracking ? '<a href="' + o.tracking + '" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">Track</a>' : '&mdash;';
         var actCell = canEdit ? '<button class="btn btn-sm btn-red" style="padding:3px 8px" onclick="deleteOrder(' + JSON.stringify(o.id) + ')">x</button>' : '&mdash;';
+        var stripeCell = o.stripeId ? '<a href="' + stripeLinkBase + o.stripeId + '" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">View ↗</a>' : '&mdash;';
         return '<tr data-order-id="' + o.id + '">'
-            + '<td><strong>' + o.id + '</strong></td>'
+            + '<td>' + stripeCell + '</td>'
             + '<td>' + o.date + '</td>'
             + '<td>' + o.items + '</td>'
             + '<td>&pound;' + parseFloat(o.total).toFixed(2) + '</td>'
