@@ -1376,9 +1376,8 @@ async function renderDashboard() {
 
     const recent = [...visible].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4);
     document.getElementById('recent-orders-wrap').innerHTML = recent.length
-        ? `<table style="font-size:0.82rem"><thead><tr><th>Order</th><th>Customer</th><th>Status</th></tr></thead><tbody>
+        ? `<table style="font-size:0.82rem"><thead><tr><th>Customer</th><th>Status</th></tr></thead><tbody>
            ${recent.map(o => `<tr>
-               <td><strong>${o.id}</strong></td>
                <td>${o.customer}</td>
                <td><span class="badge badge-${o.status}">${cap(o.status)}</span></td>
            </tr>`).join('')}
@@ -1390,10 +1389,10 @@ async function renderDashboard() {
     const myOrders = visible.filter(o => o.assignee === currentUser.name && o.status !== 'delivered' && !o._deleted)
                              .sort((a, b) => b.date.localeCompare(a.date));
     document.getElementById('my-orders-wrap').innerHTML = myOrders.length
-        ? `<table><thead><tr><th>Order</th><th>Customer</th><th>Stripe</th><th>Tracking</th></tr></thead><tbody>
+        ? `<table><thead><tr><th>Customer</th><th>Status</th><th>Stripe</th><th>Tracking</th></tr></thead><tbody>
            ${myOrders.map(o => `<tr>
-               <td><strong>${o.id}</strong></td>
                <td>${o.customer || '—'}</td>
+               <td><span class="badge badge-${o.status}">${cap(o.status)}</span></td>
                <td>${o.stripeId ? `<a href="${stripeLinkBase}${o.stripeId}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">View ↗</a>` : '—'}</td>
                <td>${o.tracking ? `<a href="${o.tracking}" target="_blank" class="btn btn-sm btn-outline" style="font-size:0.73rem;padding:3px 8px">Track ↗</a>` : '—'}</td>
            </tr>`).join('')}
