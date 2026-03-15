@@ -1562,7 +1562,18 @@ async function renderOrders() {
               : (canEdit ? `<button class="btn btn-sm btn-outline" onclick="addTracking('${o.id}','')" style="font-size:0.73rem;padding:3px 8px">+ Add Link</button>` : '—')
             }
         </td>
-        <td>${o.shippingType || '—'}</td>
+        <td>
+            ${canEdit
+                ? `<select onchange="quickShipping('${o.id}',this.value)" style="font-size:0.78rem;padding:3px 6px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;max-width:140px">
+                    <option value="">— None —</option>
+                    <option value="UK Shipping"${o.shippingType==='UK Shipping'?' selected':''}>UK Shipping</option>
+                    <option value="International Shipping"${o.shippingType==='International Shipping'?' selected':''}>International Shipping</option>
+                    <option value="Collection - Bham"${o.shippingType==='Collection - Bham'?' selected':''}>Collection - Bham</option>
+                    <option value="Collection - Lon"${o.shippingType==='Collection - Lon'?' selected':''}>Collection - Lon</option>
+                   </select>`
+                : (o.shippingType || '—')
+            }
+        </td>
         <td>
             ${canEdit
                 ? `<select onchange="quickStatus('${o.id}',this.value)" style="${statusStyle[o.status]||''}">
@@ -1588,6 +1599,12 @@ async function renderOrders() {
             ` : '—'}
         </td>
     </tr>`).join('');
+}
+
+async function quickShipping(id, shippingType) {
+    const orders = await getOrders();
+    const o = orders.find(x => x.id === id);
+    if (o) { o.shippingType = shippingType; await saveOrders(orders); }
 }
 
 async function quickStatus(id, status) {
