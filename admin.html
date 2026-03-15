@@ -763,8 +763,8 @@
                         <input type="text" id="ord-search" placeholder="Search by name or order ID…" oninput="renderOrders()">
                         <select id="ord-status-filter" onchange="renderOrders()">
                             <option value="">All Statuses</option>
-                            <option value="pending">Pending</option>
                             <option value="processing">Processing</option>
+                            <option value="packed">Packed</option>
                             <option value="shipped">Shipped</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
@@ -1017,8 +1017,8 @@
             <div class="form-group">
                 <label>Status</label>
                 <select id="ord-status">
-                    <option value="pending">Pending</option>
                     <option value="processing">Processing</option>
+                    <option value="packed">Packed</option>
                     <option value="shipped">Shipped</option>
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
@@ -1200,9 +1200,9 @@ const DEFAULT_INVENTORY = [
 const DEFAULT_ORDERS = [
     { id: 'QD-001', customer: 'Fatima Al-Hassan', date: '2026-03-01', items: '2x Standard Pack',              total: 25.98, status: 'delivered',  notes: '' },
     { id: 'QD-002', customer: 'Mohammed Reza',    date: '2026-03-03', items: '1x Deluxe Pack',                total: 19.99, status: 'shipped',    notes: 'Gift wrap requested' },
-    { id: 'QD-003', customer: 'Zainab Karimi',    date: '2026-03-05', items: '1x Bundle',                    total: 19.99, status: 'processing', notes: '' },
-    { id: 'QD-004', customer: 'Hassan Al-Amin',   date: '2026-03-06', items: '3x Standard Pack',              total: 38.97, status: 'pending',    notes: '' },
-    { id: 'QD-005', customer: 'Mariam Sadiq',     date: '2026-03-07', items: '1x Standard Pack, 1x Expansion',total: 21.98, status: 'pending',    notes: 'Urgent' },
+    { id: 'QD-003', customer: 'Zainab Karimi',    date: '2026-03-05', items: '1x Bundle',                    total: 19.99, status: 'packed',     notes: '' },
+    { id: 'QD-004', customer: 'Hassan Al-Amin',   date: '2026-03-06', items: '3x Standard Pack',              total: 38.97, status: 'processing', notes: '' },
+    { id: 'QD-005', customer: 'Mariam Sadiq',     date: '2026-03-07', items: '1x Standard Pack, 1x Expansion',total: 21.98, status: 'processing', notes: 'Urgent' },
     { id: 'QD-006', customer: 'Ali Hussain',      date: '2026-03-02', items: '1x Deluxe Pack',                total: 19.99, status: 'cancelled',  notes: 'Customer requested cancellation' },
 ];
 
@@ -1347,7 +1347,7 @@ async function renderDashboard() {
     const visible    = orders.filter(o => !o._deleted);
     const revenue    = visible.filter(o => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0);
     const totalOrds  = visible.length;
-    const pending    = visible.filter(o => o.status === 'pending').length;
+    const pending    = visible.filter(o => o.status === 'processing').length;
     const totalStock = inv.reduce((a, p) => a + p.qty, 0);
     const lowStock   = inv.filter(p => p.qty <= p.threshold);
 
@@ -1491,8 +1491,8 @@ async function deleteProduct(id) {
 // ORDERS
 // ─────────────────────────────────────────────
 const statusStyle = {
-    pending:    'background:#F39C12;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
-    processing: 'background:#3498DB;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
+    processing: 'background:#F39C12;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
+    packed:     'background:#3498DB;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
     shipped:    'background:#8E44AD;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
     delivered:  'background:#27AE60;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
     cancelled:  'background:#C0392B;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
@@ -1537,7 +1537,7 @@ async function renderOrders() {
         return;
     }
 
-    const statusOpts = ['pending','processing','shipped','delivered','cancelled'];
+    const statusOpts = ['processing','packed','shipped','delivered','cancelled'];
     const isLiveKey = getStripeKey().startsWith('sk_live') || getStripeKey().startsWith('rk_live');
     const stripeLinkBase = isLiveKey ? 'https://dashboard.stripe.com/payments/' : 'https://dashboard.stripe.com/test/payments/';
 
@@ -1600,7 +1600,7 @@ function openAddOrderModal() {
     document.getElementById('ord-modal-title').textContent = 'Add Order';
     document.getElementById('ord-edit-id').value = '';
     ['ord-customer','ord-items','ord-total','ord-country','ord-notes','ord-tracking','ord-stripe-id'].forEach(f => document.getElementById(f).value = '');
-    document.getElementById('ord-status').value = 'pending';
+    document.getElementById('ord-status').value = 'processing';
     document.getElementById('ord-shipping-type').value = '';
     document.getElementById('ord-date').value = new Date().toISOString().split('T')[0];
     openModal('ord-modal');
@@ -1991,7 +1991,7 @@ async function syncStripeOrders(){
             var dt=new Date(p.created*1000).toISOString().split('T')[0];
             var dsc=p.description||(p.metadata&&p.metadata.product)||'Stripe Payment';
             var nid='QD-'+String(nxt).padStart(3,'0');
-            orders.push({id:nid,customer:cust,items:dsc,total:amt,status:'pending',date:dt,notes:'',stripeId:p.id,country:country,shipping:shipping});
+            orders.push({id:nid,customer:cust,items:dsc,total:amt,status:'processing',date:dt,notes:'',stripeId:p.id,country:country,shipping:shipping});
             nxt++;
         });
         await saveOrders(orders);
@@ -2021,7 +2021,7 @@ async function importStripeOrder(piId){
         var amt=(pi.amount_received||pi.amount)/100;
         var dt=new Date(pi.created*1000).toISOString().split('T')[0];
         var dsc=pi.description||(pi.metadata&&pi.metadata.product)||'Stripe Payment';
-        orders.push({id:nid,customer:cust,items:dsc,total:amt,status:'processing',date:dt,notes:'Imported from Stripe: '+piId,stripeId:piId,country:country,shipping:shipping});
+        orders.push({id:nid,customer:cust,items:dsc,total:amt,status:'packed',date:dt,notes:'Imported from Stripe: '+piId,stripeId:piId,country:country,shipping:shipping});
         await saveOrders(orders);alert('Order '+nid+' created! Go to the Orders tab.');
         await renderDashboard();loadStripe();
     }catch(err){alert('Import failed: '+err.message);}
