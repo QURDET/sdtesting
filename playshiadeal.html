@@ -543,6 +543,11 @@
     </div>
 </div>
 
+<!-- ── CARD ZOOM OVERLAY (right-click any card) ── -->
+<div id="zoom-overlay" onclick="this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:5000;align-items:center;justify-content:center;cursor:zoom-out;">
+    <img id="zoom-img" src="" alt="Card zoom" style="max-height:82vh;max-width:88vw;border-radius:18px;box-shadow:0 12px 60px rgba(0,0,0,0.9);pointer-events:none;">
+</div>
+
 <!-- ── FOOTER ── -->
 <footer>
     <div class="footer-content">
@@ -818,7 +823,11 @@ function renderGame() {
 
     const handEl = document.getElementById('hand-cards');
     handEl.innerHTML = '';
-    cp.hand.forEach((card, idx) => handEl.appendChild(buildCardEl(card, idx, !cp.isAI && G.phase === 'play')));
+    if (cp.isAI) {
+        cp.hand.forEach(() => handEl.appendChild(buildFaceDownCardEl()));
+    } else {
+        cp.hand.forEach((card, idx) => handEl.appendChild(buildCardEl(card, idx, G.phase === 'play')));
+    }
 
     renderProps(document.getElementById('props-grid'), cp);
 }
@@ -852,6 +861,22 @@ function buildCardEl(card, idx, clickable) {
         el.classList.add('card-' + (card.color || card.type));
         el.innerHTML = `<div class="card-type-label">${card.type}</div><div class="card-name">${card.name}</div>`;
     }
+    // Right-click to zoom
+    el.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        const src = card.img;
+        if (!src) return;
+        document.getElementById('zoom-img').src = src;
+        document.getElementById('zoom-overlay').style.display = 'flex';
+    });
+    return el;
+}
+
+function buildFaceDownCardEl() {
+    const el = document.createElement('div');
+    el.className = 'game-card';
+    el.style.cursor = 'default';
+    el.innerHTML = `<img src="backofcard.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:6px;display:block;" draggable="false">`;
     return el;
 }
 

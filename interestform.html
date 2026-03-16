@@ -410,6 +410,25 @@
                         <input type="number" id="if-child-age" placeholder="e.g. 8" min="3" max="18" required>
                     </div>
 
+                    <div class="form-group">
+                        <label for="if-programme">Programme Interest</label>
+                        <select id="if-programme" required>
+                            <option value="" disabled selected>Select a programme…</option>
+                            <option value="Qur'an Recitation">Qur'an Recitation</option>
+                            <option value="Understanding the Qur'an">Understanding the Qur'an</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="if-format">Preferred Format</label>
+                        <select id="if-format" required>
+                            <option value="" disabled selected>Select a format…</option>
+                            <option value="Online">Online</option>
+                            <option value="Face to Face">Face to Face</option>
+                        </select>
+                    </div>
+
                     <div class="form-group full">
                         <label for="if-message">Anything else you'd like us to know?</label>
                         <textarea id="if-message" placeholder="Any questions, availability, or additional details…"></textarea>
@@ -475,6 +494,8 @@
                 phone:      document.getElementById('if-phone').value.trim(),
                 childName:  document.getElementById('if-child-name').value.trim(),
                 childAge:   document.getElementById('if-child-age').value.trim(),
+                programme:  document.getElementById('if-programme').value,
+                format:     document.getElementById('if-format').value,
                 message:    document.getElementById('if-message').value.trim(),
             };
 
