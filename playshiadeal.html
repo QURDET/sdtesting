@@ -641,7 +641,7 @@
 ════════════════════════════════════════════════════ */
 (function() {
     try {
-        var raw = sessionStorage.getItem('qdMember');
+        var raw = sessionStorage.getItem('qd_member_sess');
         if (raw) {
             var m = JSON.parse(raw);
             if (m && (m.active !== false)) return; // logged-in member → allow
