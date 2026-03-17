@@ -327,55 +327,6 @@
             gap: 10px;
         }
 
-        /* CARDS GRID */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 36px;
-        }
-
-        .download-card {
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            border-radius: 16px;
-            padding: 22px 18px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 10px var(--shadow);
-        }
-
-        .download-card:hover {
-            border-color: var(--purple);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--shadow);
-        }
-
-        .download-card .dl-icon { font-size: 2rem; }
-
-        .download-card .dl-name {
-            font-family: 'Nunito', sans-serif;
-            font-weight: 700;
-            font-size: 0.88rem;
-            color: var(--text);
-            line-height: 1.3;
-        }
-
-        .download-card .dl-tag {
-            font-size: 0.72rem;
-            color: var(--purple);
-            font-weight: 600;
-            background: rgba(123,63,94,0.1);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
         /* QUICK LINKS */
         .links-grid {
             display: grid;
@@ -505,44 +456,10 @@
             </div>
         </div>
 
-        <!-- DOWNLOADS -->
-        <div class="section-title">📥 Print-and-Play Downloads</div>
-        <div class="cards-grid">
-            <a href="ShiaDeal - Instructions Card (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">📋</div>
-                <div class="dl-name">Instructions Card</div>
-                <div class="dl-tag">PDF</div>
-            </a>
-            <a href="ShiaDeal Instructions Sheet (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">📄</div>
-                <div class="dl-name">Instructions Sheet</div>
-                <div class="dl-tag">PDF</div>
-            </a>
-            <a href="ShiaDeal-Property Cards (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">🏠</div>
-                <div class="dl-name">Property Cards</div>
-                <div class="dl-tag">PDF</div>
-            </a>
-            <a href="ShiaDeal-ActionCards (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">⚡</div>
-                <div class="dl-name">Action Cards</div>
-                <div class="dl-tag">PDF</div>
-            </a>
-            <a href="ShiaDeal- Action Cards-Rent (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">💰</div>
-                <div class="dl-name">Action Cards — Rent</div>
-                <div class="dl-tag">PDF</div>
-            </a>
-            <a href="ShiaDeal- WildCards (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">🃏</div>
-                <div class="dl-name">Wild Cards</div>
-                <div class="dl-tag">PDF</div>
-            </a>
-            <a href="ShiaDeal - Money (TO PRINT).pdf" download class="download-card">
-                <div class="dl-icon">🪙</div>
-                <div class="dl-name">Money</div>
-                <div class="dl-tag">PDF</div>
-            </a>
+        <!-- RULES -->
+        <div class="section-title">📖 Game Rules</div>
+        <div style="margin-bottom:36px">
+            <img src="SDrules.jpg" alt="Shia Deal Rules" style="width:100%;border-radius:18px;box-shadow:0 4px 24px var(--shadow);display:block;">
         </div>
 
         <!-- QUICK LINKS -->
