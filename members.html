@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){var s=localStorage.getItem('qdTheme');if(s==='dark'||(s===null&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}());</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QD Members Portal</title>
+    <link rel="icon" type="image/jpeg" href="qdlogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:       #FAF6F1;
+            --bg2:      #F5EDE4;
+            --card:     #ffffff;
+            --text:     #3B2417;
+            --text2:    #9B7B6E;
+            --border:   #E8D5C4;
+            --purple:   #7B3F5E;
+            --orange:   #E8872A;
+            --gold:     #c47f0a;
+            --shadow:   rgba(59,36,23,0.10);
+        }
+        [data-theme="dark"] {
+            --bg:       #100a06;
+            --bg2:      #1a1310;
+            --card:     #241b14;
+            --text:     #EFE0CE;
+            --text2:    #9E8071;
+            --border:   #4a3020;
+            --purple:   #7B3F5E;
+            --orange:   #E8872A;
+            --gold:     #f5c430;
+            --shadow:   rgba(0,0,0,0.4);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── LOGIN ── */
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F5E8D6 0%, #EFE0CE 40%, #E8D5C4 100%);
+        }
+        [data-theme="dark"] #login-screen {
+            background: linear-gradient(135deg, #2a1f14 0%, #201510 40%, #1a1008 100%);
+        }
+
+        .login-card {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 48px 40px;
+            width: 400px;
+            max-width: 92vw;
+            box-shadow: 0 12px 48px var(--shadow);
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 16px;
+            border: 3px solid var(--border);
+        }
+
+        .login-card h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .login-subtitle {
+            color: var(--text2);
+            font-size: 0.86rem;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus { border-color: var(--purple); background: var(--card); }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--purple);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        .btn-login:hover { background: #6A3450; }
+
+        .login-error {
+            color: #C0392B;
+            font-size: 0.82rem;
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #FDE8E8;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .login-back {
+            display: block;
+            margin-top: 18px;
+            color: var(--text2);
+            font-size: 0.84rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .login-back:hover { color: var(--purple); }
+
+        /* ── PORTAL ── */
+        #portal-screen { display: none; min-height: 100vh; }
+
+        .portal-nav {
+            background: #2C1A0E;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            height: 62px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .portal-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .portal-nav img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .portal-nav-title {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .portal-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 30px;
+            padding: 5px 14px 5px 5px;
+        }
+
+        .member-chip-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .member-chip-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .btn-signout {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.7);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.78rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-signout:hover { background: rgba(255,255,255,0.18); color: white; }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 6px 8px;
+            border-radius: 8px;
+            color: rgba(255,255,255,0.7);
+            transition: background 0.2s;
+        }
+        .theme-btn:hover { background: rgba(255,255,255,0.1); }
+
+        .portal-body {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        /* WELCOME BANNER */
+        .welcome-banner {
+            background: linear-gradient(135deg, #7B3F5E 0%, #5A2D45 100%);
+            border-radius: 20px;
+            padding: 32px 36px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 32px rgba(123,63,94,0.35);
+        }
+
+        .welcome-text h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .welcome-text p {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.9rem;
+        }
+
+        .membership-badge {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 16px;
+            padding: 18px 24px;
+            text-align: center;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+
+        .membership-badge .plan-name {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .membership-badge .plan-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .expiry-info {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* SECTION TITLES */
+        .section-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CARDS GRID */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .download-card {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 18px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        .download-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .download-card .dl-icon { font-size: 2rem; }
+
+        .download-card .dl-name {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .download-card .dl-tag {
+            font-size: 0.72rem;
+            color: var(--purple);
+            font-weight: 600;
+            background: rgba(123,63,94,0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* QUICK LINKS */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .link-card {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 26px 24px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .link-card:hover {
+            border-color: var(--orange);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .link-card .lc-icon {
+            font-size: 2.2rem;
+            flex-shrink: 0;
+        }
+
+        .link-card .lc-text h4 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .link-card .lc-text p {
+            font-size: 0.8rem;
+            color: var(--text2);
+            line-height: 1.4;
+        }
+
+        .link-card .lc-arrow {
+            margin-left: auto;
+            font-size: 1.1rem;
+            color: var(--text2);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 600px) {
+            .portal-body { padding: 20px 16px 48px; }
+            .welcome-banner { padding: 24px 20px; }
+            .welcome-text h2 { font-size: 1.35rem; }
+            .portal-nav { padding: 0 16px; }
+            .member-chip-name { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="login-screen">
+    <div class="login-card">
+        <img src="qdlogo.jpg" alt="Qur'an Detectives" class="login-logo">
+        <h1>Members Portal</h1>
+        <p class="login-subtitle">Sign in to access your membership</p>
+        <div class="form-group">
+            <label>Email or Username</label>
+            <input type="text" id="login-id" placeholder="your@email.com or username" autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-pw" placeholder="Your password" autocomplete="current-password"
+                   onkeydown="if(event.key==='Enter') doMemberLogin()">
+        </div>
+        <button class="btn-login" onclick="doMemberLogin()">Sign In</button>
+        <div class="login-error" id="login-error"></div>
+        <a href="index.html" class="login-back">← Back to home</a>
+    </div>
+</div>
+
+<!-- ── MEMBER PORTAL ── -->
+<div id="portal-screen">
+
+    <!-- NAV -->
+    <nav class="portal-nav">
+        <div class="portal-nav-left">
+            <img src="qdlogo.jpg" alt="QD">
+            <span class="portal-nav-title">QD Members</span>
+        </div>
+        <div class="portal-nav-right">
+            <div class="member-chip">
+                <div class="member-chip-avatar" id="nav-avatar">?</div>
+                <span class="member-chip-name" id="nav-name">Member</span>
+            </div>
+            <button class="theme-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+            <button class="btn-signout" onclick="doSignOut()">Sign Out</button>
+        </div>
+    </nav>
+
+    <!-- BODY -->
+    <div class="portal-body">
+
+        <!-- WELCOME BANNER -->
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h2>Welcome back, <span id="welcome-name">Member</span>! 👋</h2>
+                <p>You have full access to all member content below.</p>
+            </div>
+            <div class="membership-badge">
+                <div class="plan-label">Membership Plan</div>
+                <div class="plan-name" id="plan-name">—</div>
+                <div class="expiry-info" id="expiry-info"></div>
+            </div>
+        </div>
+
+        <!-- DOWNLOADS -->
+        <div class="section-title">📥 Print-and-Play Downloads</div>
+        <div class="cards-grid">
+            <a href="ShiaDeal - Instructions Card (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">📋</div>
+                <div class="dl-name">Instructions Card</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+            <a href="ShiaDeal Instructions Sheet (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">📄</div>
+                <div class="dl-name">Instructions Sheet</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+            <a href="ShiaDeal-Property Cards (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">🏠</div>
+                <div class="dl-name">Property Cards</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+            <a href="ShiaDeal-ActionCards (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">⚡</div>
+                <div class="dl-name">Action Cards</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+            <a href="ShiaDeal- Action Cards-Rent (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">💰</div>
+                <div class="dl-name">Action Cards — Rent</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+            <a href="ShiaDeal- WildCards (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">🃏</div>
+                <div class="dl-name">Wild Cards</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+            <a href="ShiaDeal - Money (TO PRINT).pdf" download class="download-card">
+                <div class="dl-icon">🪙</div>
+                <div class="dl-name">Money</div>
+                <div class="dl-tag">PDF</div>
+            </a>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div class="section-title">🔗 Quick Links</div>
+        <div class="links-grid">
+            <a href="playshiadeal.html" class="link-card">
+                <div class="lc-icon">🎮</div>
+                <div class="lc-text">
+                    <h4>Play Online</h4>
+                    <p>Play Shia Deal online against AI, with friends locally, or online multiplayer</p>
+                </div>
+                <div class="lc-arrow">→</div>
+            </a>
+            <a href="sdrescources.html" class="link-card">
+                <div class="lc-icon">📚</div>
+                <div class="lc-text">
+                    <h4>Resources &amp; Rules</h4>
+                    <p>Full game rules, card reference, and extra resources for Shia Deal</p>
+                </div>
+                <div class="lc-arrow">→</div>
+            </a>
+            <a href="shiadeal.html" class="link-card">
+                <div class="lc-icon">🎲</div>
+                <div class="lc-text">
+                    <h4>Shia Deal</h4>
+                    <p>About the game — shop physical copies and learn more</p>
+                </div>
+                <div class="lc-arrow">→</div>
+            </a>
+            <a href="contactus.html" class="link-card">
+                <div class="lc-icon">✉️</div>
+                <div class="lc-text">
+                    <h4>Contact Us</h4>
+                    <p>Questions about your membership or anything else? Get in touch</p>
+                </div>
+                <div class="lc-arrow">→</div>
+            </a>
+        </div>
+
+    </div><!-- /portal-body -->
+</div><!-- /portal-screen -->
+
+<script>
+// ─────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────
+function toggleTheme() {
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (dark) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('qdTheme', 'light'); }
+    else       { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('qdTheme', 'dark'); }
+    updateThemeBtn();
+}
+function updateThemeBtn() {
+    var b = document.getElementById('theme-toggle');
+    if (b) b.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+}
+document.addEventListener('DOMContentLoaded', updateThemeBtn);
+
+// ─────────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────────
+var currentMember = null;
+
+async function doMemberLogin() {
+    var login = document.getElementById('login-id').value.trim();
+    var pass  = document.getElementById('login-pw').value;
+    var errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+
+    if (!login || !pass) {
+        errEl.textContent = 'Please enter your email/username and password.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    try {
+        var r = await fetch('/api/member-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ login: login, password: pass })
+        });
+        var data = await r.json();
+        if (!r.ok) {
+            errEl.textContent = data.error || 'Incorrect credentials. Please try again.';
+            errEl.style.display = 'block';
+            return;
+        }
+        currentMember = data.member;
+        sessionStorage.setItem('qd_member_sess', JSON.stringify(data.member));
+        showPortal();
+    } catch {
+        errEl.textContent = 'Could not connect to server. Please try again.';
+        errEl.style.display = 'block';
+    }
+}
+
+function doSignOut() {
+    currentMember = null;
+    sessionStorage.removeItem('qd_member_sess');
+    document.getElementById('portal-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display  = 'flex';
+    document.getElementById('login-pw').value = '';
+}
+
+function showPortal() {
+    var m = currentMember;
+    document.getElementById('login-screen').style.display  = 'none';
+    document.getElementById('portal-screen').style.display = 'block';
+
+    // Nav
+    document.getElementById('nav-avatar').textContent = m.name.charAt(0).toUpperCase();
+    document.getElementById('nav-name').textContent   = m.name;
+
+    // Welcome
+    document.getElementById('welcome-name').textContent = m.name.split(' ')[0];
+
+    // Plan badge
+    document.getElementById('plan-name').textContent = m.plan || 'Member';
+    var expiryEl = document.getElementById('expiry-info');
+    if (m.expiryDate) {
+        var exp = new Date(m.expiryDate);
+        var today = new Date(); today.setHours(0,0,0,0);
+        var daysLeft = Math.ceil((exp - today) / 86400000);
+        if (daysLeft > 30) {
+            expiryEl.textContent = 'Expires ' + exp.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+        } else if (daysLeft > 0) {
+            expiryEl.innerHTML = '<span style="color:#FFF3CD;font-weight:600">Expires in ' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + '</span>';
+        }
+    } else {
+        expiryEl.textContent = 'Lifetime access';
+    }
+    window.scrollTo(0, 0);
+}
+
+// Restore session on page load
+(function() {
+    try {
+        var s = sessionStorage.getItem('qd_member_sess');
+        if (s) {
+            currentMember = JSON.parse(s);
+            // Check expiry client-side too
+            if (currentMember.expiryDate && new Date(currentMember.expiryDate) < new Date()) {
+                sessionStorage.removeItem('qd_member_sess');
+                currentMember = null;
+                return;
+            }
+            showPortal();
+        }
+    } catch { sessionStorage.removeItem('qd_member_sess'); }
+})();
+</script>
+
+</body>
+</html>

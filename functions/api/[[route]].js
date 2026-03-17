@@ -4,6 +4,7 @@
 const DEFAULT_DATA = {
     contacts: [],
     interests: [],
+    members: [],
     settings: { googleClientId: '' },
     users: [
         { id: 'u1', username: 'mamda006.310', password: 'HelloAbbas2023!', name: 'Abbas M',  role: 'admin' },
@@ -47,6 +48,7 @@ export async function onRequest(context) {
         }
         const d = JSON.parse(raw);
         if (!d.settings) d.settings = { googleClientId: '' };
+        if (!d.members) d.members = [];
         if (d.users) {
             d.users = d.users.map(u => {
                 if (!u.password) {
@@ -224,6 +226,44 @@ export async function onRequest(context) {
             d.interests = (d.interests || []).filter(i => i.id !== id);
             await writeData(d);
             return json({ ok: true });
+        }
+
+        // POST /api/member-login
+        if (route === 'member-login' && method === 'POST') {
+            const body = await request.json();
+            if (!body.login || !body.password) return json({ error: 'Missing credentials' }, 400);
+            const d = await readData();
+            const login = body.login.toLowerCase().trim();
+            const member = (d.members || []).find(m =>
+                m.active !== false &&
+                m.password === body.password &&
+                ((m.email || '').toLowerCase() === login || (m.username || '').toLowerCase() === login)
+            );
+            if (!member) return json({ error: 'Invalid credentials or account not found' }, 401);
+            if (member.expiryDate && new Date(member.expiryDate) < new Date()) {
+                return json({ error: 'Your membership has expired. Please contact us to renew.' }, 403);
+            }
+            const safe = Object.assign({}, member); delete safe.password;
+            return json({ member: safe });
+        }
+
+        // GET /api/members (never expose passwords)
+        if (route === 'members' && method === 'GET') {
+            const d = await readData();
+            const safe = (d.members || []).map(function(m) { var c = Object.assign({}, m); delete c.password; return c; });
+            return json(safe);
+        }
+
+        // PUT /api/members — preserve passwords since client never holds them
+        if (route === 'members' && method === 'PUT') {
+            const d = await readData();
+            const byId = {};
+            (d.members || []).forEach(m => { byId[m.id] = m; });
+            const incoming = await request.json();
+            d.members = incoming.map(nm => ({ ...nm, password: nm.password || (byId[nm.id] && byId[nm.id].password) || '' }));
+            await writeData(d);
+            const safe = d.members.map(function(m) { var c = Object.assign({}, m); delete c.password; return c; });
+            return json(safe);
         }
 
         // POST /api/reset

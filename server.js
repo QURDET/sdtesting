@@ -10,6 +10,7 @@ const DATA_FILE = fs.existsSync("/data") ? "/data/data.json" : path.join(__dirna
 const DEFAULT_DATA = {
     contacts: [],
     interests: [],
+    members: [],
     users: [
         { id: "u1", username: "mamda006.310", password: process.env.ADMIN_PASSWORD || "", name: "Abbas M",  role: "admin" },
         { id: "u2", username: "zjets988",     password: process.env.STAFF_PASSWORD  || "", name: "Zahra J",  role: "staff" },
@@ -130,6 +131,43 @@ app.delete("/api/interests/:id", function(req, res) {
     d.interests = (d.interests || []).filter(function(i) { return i.id !== req.params.id; });
     writeData(d);
     res.json({ ok: true });
+});
+
+// POST /api/member-login
+app.post("/api/member-login", function(req, res) {
+    var body = req.body || {};
+    if (!body.login || !body.password) return res.status(400).json({ error: "Missing credentials" });
+    var login = body.login.toLowerCase().trim();
+    var d = readData();
+    var member = (d.members || []).find(function(m) {
+        return m.active !== false &&
+            m.password === body.password &&
+            ((m.email || "").toLowerCase() === login || (m.username || "").toLowerCase() === login);
+    });
+    if (!member) return res.status(401).json({ error: "Invalid credentials or account not found" });
+    if (member.expiryDate && new Date(member.expiryDate) < new Date()) {
+        return res.status(403).json({ error: "Your membership has expired. Please contact us to renew." });
+    }
+    var safe = Object.assign({}, member); delete safe.password;
+    res.json({ member: safe });
+});
+
+// GET /api/members (never expose passwords)
+app.get("/api/members", function(req, res) {
+    var d = readData();
+    res.json((d.members || []).map(function(m) { var c = Object.assign({}, m); delete c.password; return c; }));
+});
+
+// PUT /api/members — preserve passwords
+app.put("/api/members", function(req, res) {
+    var d = readData();
+    var byId = {};
+    (d.members || []).forEach(function(m) { byId[m.id] = m; });
+    d.members = req.body.map(function(nm) {
+        return Object.assign({}, nm, { password: nm.password || (byId[nm.id] && byId[nm.id].password) || "" });
+    });
+    writeData(d);
+    res.json(d.members.map(function(m) { var c = Object.assign({}, m); delete c.password; return c; }));
 });
 
 app.post("/api/reset", function(req, res) { writeData(DEFAULT_DATA); res.json({ ok: true }); });
