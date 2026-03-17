@@ -412,6 +412,7 @@
         .badge-shipped   { background: #D4EDDA; color: #155724; }
         .badge-delivered { background: #D1ECF1; color: #0C5460; }
         .badge-cancelled { background: #F8D7DA; color: #721C24; }
+        .badge-issue     { background: #FFE0CC; color: #7D3C00; }
         .badge-low       { background: #F8D7DA; color: #721C24; }
         .badge-ok        { background: #D4EDDA; color: #155724; }
 
@@ -770,6 +771,7 @@
                             <option value="packed">Packed</option>
                             <option value="shipped">Shipped</option>
                             <option value="cancelled">Cancelled</option>
+                            <option value="issue">Issue</option>
                         </select>
                     </div>
                     <div class="table-card">
@@ -1062,6 +1064,7 @@
                     <option value="shipped">Shipped</option>
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
+                    <option value="issue">Issue</option>
                 </select>
             </div>
         </div>
@@ -1613,6 +1616,7 @@ const statusStyle = {
     shipped:    'background:#8E44AD;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
     delivered:  'background:#27AE60;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
     cancelled:  'background:#C0392B;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
+    issue:      'background:#E67E22;color:#fff;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer',
 };
 
 async function quickTracking(id, url) {
@@ -1654,7 +1658,7 @@ async function renderOrders() {
         return;
     }
 
-    const statusOpts = ['processing','packed','shipped','delivered','cancelled'];
+    const statusOpts = ['processing','packed','shipped','delivered','cancelled','issue'];
     const isLiveKey = getStripeKey().startsWith('sk_live') || getStripeKey().startsWith('rk_live');
     const stripeLinkBase = isLiveKey ? 'https://dashboard.stripe.com/payments/' : 'https://dashboard.stripe.com/test/payments/';
 
