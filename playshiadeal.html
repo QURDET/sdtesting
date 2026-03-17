@@ -156,6 +156,39 @@
         }
         .btn-back:hover { border-color:var(--gold); color:var(--text); }
 
+        /* ── DIFFICULTY SLIDER ── */
+        .diff-slider-wrap { padding:4px 0 8px; }
+        .diff-labels {
+            display:flex; justify-content:space-between;
+            margin-bottom:10px;
+        }
+        .diff-label {
+            font-size:0.72rem; font-weight:600; color:var(--text3);
+            text-align:center; flex:1; transition:color 0.2s;
+        }
+        .diff-label.active { color:var(--text); }
+        .diff-desc {
+            text-align:center; font-size:0.8rem; color:var(--text3);
+            margin-top:10px; min-height:1.2em; transition:color 0.2s;
+        }
+        input[type=range]#diff-slider {
+            -webkit-appearance:none; appearance:none;
+            width:100%; height:6px; border-radius:4px;
+            background:var(--card-border); outline:none; cursor:pointer;
+            transition:background 0.2s;
+        }
+        input[type=range]#diff-slider::-webkit-slider-thumb {
+            -webkit-appearance:none; appearance:none;
+            width:22px; height:22px; border-radius:50%;
+            background:var(--gold); border:3px solid var(--card-bg);
+            box-shadow:0 2px 8px rgba(0,0,0,0.25); cursor:pointer; transition:background 0.2s;
+        }
+        input[type=range]#diff-slider::-moz-range-thumb {
+            width:22px; height:22px; border-radius:50%;
+            background:var(--gold); border:3px solid var(--card-bg);
+            box-shadow:0 2px 8px rgba(0,0,0,0.25); cursor:pointer;
+        }
+
         /* ── GAME SCREEN ── */
         #screen-game {
             display:none; flex-direction:column; min-height:100vh;
@@ -504,13 +537,19 @@
         </div>
 
         <div class="form-group" id="difficulty-group" style="display:none">
-            <label for="ai-difficulty">AI Difficulty</label>
-            <select id="ai-difficulty">
-                <option value="easy">🟢 Easy — relaxed, plays randomly</option>
-                <option value="medium" selected>🟡 Medium — balanced play</option>
-                <option value="hard">🟠 Hard — smart &amp; aggressive</option>
-                <option value="veryhard">🔴 Very Hard — optimal play</option>
-            </select>
+            <label>AI Difficulty</label>
+            <div class="diff-slider-wrap">
+                <div class="diff-labels">
+                    <span class="diff-label" id="dlbl-0">🟢<br>Easy</span>
+                    <span class="diff-label active" id="dlbl-1">🟡<br>Medium</span>
+                    <span class="diff-label" id="dlbl-2">🟠<br>Hard</span>
+                    <span class="diff-label" id="dlbl-3">🔴<br>Very Hard</span>
+                </div>
+                <input type="range" id="diff-slider" min="0" max="3" step="1" value="1" oninput="updateDiffSlider(this.value)">
+                <div class="diff-desc" id="diff-desc">Balanced play — smart card choices</div>
+            </div>
+            <!-- hidden field read by startGame() -->
+            <input type="hidden" id="ai-difficulty" value="medium">
         </div>
 
         <div class="form-group">
@@ -805,6 +844,7 @@ function startMode(mode) {
         document.getElementById('player-count').value = '2';
         countGroup.style.display = 'none';
         document.getElementById('difficulty-group').style.display = '';
+        updateDiffSlider(document.getElementById('diff-slider').value);
     } else {
         document.getElementById('setup-title').textContent = 'Local Multiplayer Setup';
         document.getElementById('setup-sub').textContent   = 'Pass the device between players each turn.';
@@ -814,6 +854,28 @@ function startMode(mode) {
     }
     updateNameInputs();
     showScreen('screen-setup');
+}
+
+const DIFF_DATA = [
+    { value:'easy',     desc:'Relaxed — plays randomly, ends turns early' },
+    { value:'medium',   desc:'Balanced play — smart card choices' },
+    { value:'hard',     desc:'Aggressive — prioritises completing sets' },
+    { value:'veryhard', desc:'Optimal — targets your sets, no mercy' },
+];
+function updateDiffSlider(val) {
+    const i = parseInt(val);
+    const d = DIFF_DATA[i];
+    document.getElementById('ai-difficulty').value = d.value;
+    document.getElementById('diff-desc').textContent = d.desc;
+    for (let j=0; j<4; j++) {
+        document.getElementById('dlbl-'+j).classList.toggle('active', j===i);
+    }
+    // colour the track fill up to the thumb
+    const pct = (i/3)*100;
+    const colours = ['#4caf50','#f5c430','#e07b39','#cc2222'];
+    const slider = document.getElementById('diff-slider');
+    slider.style.background = `linear-gradient(to right, ${colours[i]} ${pct}%, var(--card-border) ${pct}%)`;
+    slider.style.setProperty('--thumb-color', colours[i]);
 }
 
 function updateNameInputs() {
