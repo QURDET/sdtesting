@@ -228,13 +228,13 @@
         }
         .opp-props { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
 
-        /* Center area */
-        .center-area {
+        /* ── TABLE MIDDLE: draw-left | log | discard-right ── */
+        .table-middle {
             background:var(--card-bg); border:2px solid var(--card-border);
-            border-radius:14px; padding:12px 16px;
-            display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+            border-radius:14px; padding:12px 20px;
+            display:flex; align-items:center; gap:14px;
         }
-        .deck-area { display:flex; gap:16px; align-items:center; }
+        .pile-side { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; }
         .deck-pile {
             width:60px; height:84px; border-radius:8px;
             background:url('backofcard.jpg') center/cover no-repeat;
@@ -246,7 +246,6 @@
         }
         .deck-pile:hover { transform:scale(1.05); }
         .deck-label { font-size:0.75rem; color:var(--text3); text-align:center; margin-top:4px; }
-        .discard-area { display:flex; flex-direction:column; align-items:center; }
         .discard-pile {
             width:60px; height:84px; border-radius:8px;
             border:2px dashed var(--card-border); display:flex; align-items:center;
@@ -254,9 +253,10 @@
             flex-shrink:0; position:relative; overflow:hidden;
         }
         .game-log {
-            flex:1; min-width:180px; max-height:100px; overflow-y:auto;
+            flex:1; min-width:0; max-height:100px; overflow-y:auto;
             font-size:0.78rem; color:var(--text3); line-height:1.6;
-            border-left:2px solid var(--card-border); padding-left:12px;
+            border-left:2px solid var(--card-border); border-right:2px solid var(--card-border);
+            padding:0 12px;
         }
         .log-entry { padding:1px 0; }
         .log-entry.highlight { color:var(--gold); font-weight:600; }
@@ -268,22 +268,17 @@
         .end-turn-btn:hover { background:var(--gold2); transform:translateY(-1px); }
         .end-turn-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
 
-        /* Player area */
-        .player-area {
-            background:var(--card-bg); border:2px solid var(--gold);
-            border-radius:14px; padding:12px 14px;
+        /* ── PLAYER TABLE AREA (played cards right in front of player) ── */
+        .player-table-area {
+            background:var(--card-bg); border:2px solid var(--card-border);
+            border-radius:14px; padding:12px 16px; min-height:64px;
         }
-        .player-area-title {
+        .player-table-title {
             font-size:0.85rem; font-weight:700; color:var(--gold);
-            margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:10px; display:flex; align-items:center;
+            justify-content:space-between; flex-wrap:wrap; gap:6px;
         }
         .player-bank-info { font-size:0.78rem; color:var(--text3); }
-        .player-layout { display:flex; gap:14px; flex-wrap:wrap; }
-        .player-hand-section { flex:1; min-width:200px; }
-        .player-hand-section h4 { font-size:0.8rem; color:var(--text3); margin-bottom:8px; }
-        .hand-cards { display:flex; gap:8px; flex-wrap:wrap; }
-        .player-props-section { flex:1.5; min-width:200px; }
-        .player-props-section h4 { font-size:0.8rem; color:var(--text3); margin-bottom:8px; }
         .props-grid { display:flex; gap:8px; flex-wrap:wrap; }
         .color-set {
             border-radius:10px; padding:6px 8px; min-width:80px;
@@ -291,6 +286,34 @@
         }
         .color-set-title { font-size:0.68rem; font-weight:700; margin-bottom:2px; }
         .color-set-card { font-size:0.65rem; background:rgba(255,255,255,0.15); padding:2px 5px; border-radius:4px; }
+
+        /* ── HAND FAN (your cards, slides off at end of turn) ── */
+        .hand-fan-container {
+            background:var(--card-bg); border:2px solid var(--gold);
+            border-radius:14px; padding:10px 16px 0;
+            position:relative; z-index:5; overflow:visible;
+            transition:transform 0.5s cubic-bezier(0.4,0,0.6,1), opacity 0.4s ease;
+        }
+        .hand-fan-container.fan-slide-out {
+            transform:translateY(280px);
+            opacity:0;
+            pointer-events:none;
+        }
+        .hand-fan-label {
+            font-size:0.85rem; font-weight:700; color:var(--gold);
+            text-align:center; margin-bottom:4px;
+        }
+        .hand-fan {
+            position:relative; height:152px; display:block;
+        }
+        .fan-card-wrap {
+            position:absolute; bottom:0; left:50%;
+            transform-origin:bottom center;
+            transition:transform 0.15s ease;
+        }
+        /* Fan wraps handle hover — disable default game-card lift inside fan */
+        .hand-fan .game-card { cursor:pointer; }
+        .hand-fan .game-card:hover { transform:none !important; }
 
         /* Playing cards */
         .game-card {
@@ -444,8 +467,9 @@
             .mode-card { width:100%; max-width:320px; }
             .game-card { width:54px; height:76px; }
             .setup-box { padding:28px 20px; }
-            .center-area { flex-direction:column; }
             .game-topbar { font-size:0.78rem; }
+            .table-middle { gap:8px; padding:10px 12px; }
+            .hand-fan { height:118px; }
         }
     </style>
 </head>
@@ -580,41 +604,37 @@
         <!-- Opponents -->
         <div class="opponents-row" id="opponents-row"></div>
 
-        <!-- Center: deck + discard + log + end turn -->
-        <div class="center-area">
-            <div class="deck-area">
-                <div>
-                    <div class="deck-pile" id="deck-pile" onclick="drawCard()">
-                        <span id="deck-count" style="display:none;"></span>
-                    </div>
-                    <div class="deck-label">Draw Pile</div>
+        <!-- Table: DRAW (left) | log | DISCARD (right) -->
+        <div class="table-middle">
+            <div class="pile-side">
+                <div class="deck-pile" id="deck-pile" onclick="drawCard()">
+                    <span id="deck-count" style="display:none;"></span>
                 </div>
-                <div class="discard-area">
-                    <div class="discard-pile" id="discard-pile">
-                        <span id="discard-empty-text" style="display:none;"></span>
-                    </div>
-                    <div class="deck-label">Discard</div>
-                </div>
+                <div class="deck-label">Draw Pile</div>
             </div>
             <div class="game-log" id="game-log"></div>
+            <div class="pile-side">
+                <div class="discard-pile" id="discard-pile">
+                    <span id="discard-empty-text" style="display:none;"></span>
+                </div>
+                <div class="deck-label">Discard</div>
+            </div>
         </div>
 
-        <!-- Current player -->
-        <div class="player-area" id="player-area">
-            <div class="player-area-title">
-                <span id="player-area-name">Your Hand</span>
+        <!-- Player's placed items — right in front of you -->
+        <div class="player-table-area" id="player-table-area">
+            <div class="player-table-title">
+                <span id="player-area-name">Your Plays</span>
                 <span class="player-bank-info" id="player-bank-info">Bank: £0M</span>
+                <span id="sets-count" style="color:var(--gold);font-size:0.8rem;">(0/3 sets)</span>
             </div>
-            <div class="player-layout">
-                <div class="player-hand-section">
-                    <h4>Hand <span id="hand-count" style="color:var(--gold);">(0)</span></h4>
-                    <div class="hand-cards" id="hand-cards"></div>
-                </div>
-                <div class="player-props-section">
-                    <h4>Your Properties <span id="sets-count" style="color:var(--gold);">(0/3 sets)</span></h4>
-                    <div class="props-grid" id="props-grid"></div>
-                </div>
-            </div>
+            <div class="props-grid" id="props-grid"></div>
+        </div>
+
+        <!-- Hand as fan — slides off screen at end of turn -->
+        <div class="hand-fan-container" id="hand-fan-container">
+            <div class="hand-fan-label">Hand <span id="hand-count" style="color:var(--gold);">(0)</span></div>
+            <div class="hand-fan" id="hand-fan"></div>
         </div>
     </div>
 </div>
@@ -972,20 +992,12 @@ function renderGame() {
     });
 
     // Current player area
-    document.getElementById('player-area-name').textContent = cp.name + (cp.isAI?' 🤖':'') + "'s Hand";
+    document.getElementById('player-area-name').textContent = cp.name + (cp.isAI?' 🤖':'') + "'s Turn";
     document.getElementById('player-bank-info').textContent = 'Bank: £' + cp.bank.reduce((s,c)=>s+c.value,0) + 'M';
     document.getElementById('sets-count').textContent = `(${completeSets(cp)}/3 sets)`;
-    document.getElementById('hand-count').textContent  = '('+cp.hand.length+')';
-
-    const handEl = document.getElementById('hand-cards');
-    handEl.innerHTML = '';
-    if (cp.isAI) {
-        cp.hand.forEach(() => handEl.appendChild(buildFaceDownCardEl()));
-    } else {
-        cp.hand.forEach((card, idx) => handEl.appendChild(buildCardEl(card, idx, G.phase === 'play')));
-    }
 
     renderProps(document.getElementById('props-grid'), cp);
+    renderFan(cp, G.phase === 'play');
 }
 
 function renderProps(container, player) {
@@ -1005,6 +1017,47 @@ function renderProps(container, player) {
     });
     if (!Object.keys(player.props).length)
         container.innerHTML = '<span style="color:var(--text3);font-size:0.82rem;">No properties yet</span>';
+}
+
+function renderFan(player, clickable) {
+    const fan = document.getElementById('hand-fan');
+    if (!fan) return;
+    fan.innerHTML = '';
+    const cards = player.hand;
+    const n = cards.length;
+    document.getElementById('hand-count').textContent = '(' + n + ')';
+    if (!n) return;
+
+    const STEP_DEG = Math.min(6, 42 / Math.max(n, 1));
+    const STEP_PX  = Math.min(46, 340 / Math.max(n, 1));
+
+    cards.forEach((card, idx) => {
+        const mid = (n - 1) / 2;
+        const off = idx - mid;
+        const deg = off * STEP_DEG;
+        const tx  = off * STEP_PX;
+        const ty  = off * off * 1.8; // arc: edges sit slightly lower
+
+        const wrap = document.createElement('div');
+        wrap.className = 'fan-card-wrap';
+        wrap.style.zIndex = idx;
+        wrap.style.transform = `translateX(calc(-50% + ${tx}px)) translateY(${ty}px) rotate(${deg}deg)`;
+
+        if (clickable && !player.isAI) {
+            wrap.addEventListener('mouseenter', () => {
+                wrap.style.transform = `translateX(calc(-50% + ${tx}px)) translateY(${ty - 26}px) rotate(${deg}deg) scale(1.08)`;
+                wrap.style.zIndex = 200;
+            });
+            wrap.addEventListener('mouseleave', () => {
+                wrap.style.transform = `translateX(calc(-50% + ${tx}px)) translateY(${ty}px) rotate(${deg}deg)`;
+                wrap.style.zIndex = idx;
+            });
+        }
+
+        const cardEl = player.isAI ? buildFaceDownCardEl() : buildCardEl(card, idx, clickable);
+        wrap.appendChild(cardEl);
+        fan.appendChild(wrap);
+    });
 }
 
 function buildCardEl(card, idx, clickable) {
@@ -1246,6 +1299,26 @@ function showStealSetModal(playerIdx) {
 }
 
 /* ════════════════════════════════════════════════════
+   FAN ANIMATION HELPERS
+════════════════════════════════════════════════════ */
+function slideFanOut(callback) {
+    const fc = document.getElementById('hand-fan-container');
+    if (!fc) { if (callback) callback(); return; }
+    fc.classList.add('fan-slide-out');
+    setTimeout(() => { if (callback) callback(); }, 520);
+}
+function slideFanIn() {
+    const fc = document.getElementById('hand-fan-container');
+    if (!fc) return;
+    fc.style.transition = 'none';
+    fc.classList.add('fan-slide-out');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        fc.style.transition = '';
+        fc.classList.remove('fan-slide-out');
+    }));
+}
+
+/* ════════════════════════════════════════════════════
    END TURN
 ════════════════════════════════════════════════════ */
 function checkAutoEndTurn() {
@@ -1253,7 +1326,7 @@ function checkAutoEndTurn() {
     const cp = G.players[G.currentPlayer];
     if (!cp.isAI && G.phase === 'play' && G.playsThisTurn >= G.maxPlays) {
         addLog('3 plays used — turn ended automatically.', true);
-        setTimeout(endTurn, 400);
+        setTimeout(() => slideFanOut(nextPlayer), 400);
     }
 }
 
@@ -1262,7 +1335,7 @@ function endTurn() {
     const cp = G.players[G.currentPlayer];
     if (G.phase === 'draw') { addLog('Draw your cards first.'); return; }
     if (cp.hand.length > 7) { G.phase = 'discard'; showDiscardModal(cp); return; }
-    nextPlayer();
+    slideFanOut(nextPlayer);
 }
 
 function showDiscardModal(player) {
@@ -1294,6 +1367,7 @@ function nextPlayer() {
         overlay.style.display = 'flex';
     } else {
         renderGame();
+        slideFanIn();
         if (cp.isAI) setTimeout(doAITurn, 800);
     }
 }
@@ -1301,6 +1375,7 @@ function nextPlayer() {
 function dismissPassTo() {
     document.getElementById('passto-overlay').style.display = 'none';
     renderGame();
+    slideFanIn();
     const cp = G.players[G.currentPlayer];
     if (cp.isAI) setTimeout(doAITurn, 800);
 }

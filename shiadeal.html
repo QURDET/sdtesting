@@ -1184,30 +1184,6 @@
 
         }
 
-        /* ── Eid sale announcement banner ── */
-        .eid-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1001;
-            background: linear-gradient(90deg, #1a6b3c, #2d9c5a, #1a6b3c);
-            color: #fff;
-            text-align: center;
-            padding: 9px 16px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-        }
-        .eid-banner span {
-            margin: 0 6px;
-            opacity: 0.75;
-        }
-        /* Push nav down by banner height */
-        nav { top: 40px !important; }
-
         /* ── Theme toggle ── */
         .theme-toggle { background: none; border: none; cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 6px 8px; border-radius: 8px; color: #ffffff; flex-shrink: 0; z-index: 1001; }
         .theme-toggle:hover { background: rgba(255,255,255,0.15); }
@@ -1263,11 +1239,6 @@
     </style>
 </head>
 <body>
-    <!-- ── Eid Sale Banner ── -->
-    <div class="eid-banner">
-        🌙 EID SALE — Shia Deal now only <strong>£22.95</strong> <span>|</span> Offer ends on Eid &nbsp;🌙
-    </div>
-
     <!-- ========== NAVIGATION BAR - Fixed at top, contains logo + hamburger menu + links ========== -->
     <nav>
         <div class="logo">
@@ -1402,7 +1373,7 @@
             </div>
             <div class="preorder-details">
                 <h3>Shia Deal Card Game</h3>
-                <div class="price" style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="text-decoration:line-through;color:#aaa;font-size:1.1rem;font-weight:500">£25.00</span><span style="background:#e63946;color:#fff;font-size:0.75rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.5px">🌙 EID OFFER</span></div>£22.95 <span>+ shipping</span></div>
+                <div class="price">£25.00 <span>+ shipping</span></div>
 
                 <ul class="preorder-features">
                     <li>Complete deck with all card types</li>
@@ -1718,7 +1689,7 @@
            buy button doesn't load. The main payment is
            handled by the <stripe-buy-button> element above.
            ============================================ */
-        const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/dRmfZh1Kp3DO5dK2GP3AY0a';
+        const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/14AaEX88N1vG5dKchp3AY01';
 
         let quantity = 1;           // Current quantity selected by the user
         const MIN_QUANTITY = 1;     // Minimum order of 1
@@ -1746,10 +1717,10 @@
            per-country links when they are ready.
            ============================================ */
         const countryLinks = {
-            uk: 'https://buy.stripe.com/dRmfZh1Kp3DO5dK2GP3AY0a', // UK link
-            us: 'https://buy.stripe.com/fZueVd88N3DO0Xuchp3AY09', // US link
-            ca: 'https://buy.stripe.com/fZu14n88Ncak35C6X53AY08', // Canada link
-            au: 'https://buy.stripe.com/4gM3cv88N8Y849G1CL3AY07', // Australia link
+            uk: 'https://buy.stripe.com/14AaEX88N1vG5dKchp3AY01',
+            us: 'https://buy.stripe.com/aFa5kDexb5LW9u0dlt3AY04',
+            au: 'https://buy.stripe.com/14A9AT9cR0rCcGc4OX3AY05',
+            ca: 'https://buy.stripe.com/fZu8wP4WB0rC49G3KT3AY06',
         };
 
         /* Open the country selector modal */
