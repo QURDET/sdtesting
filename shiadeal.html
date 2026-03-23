@@ -1236,6 +1236,77 @@
         [data-theme="dark"] .promo-banner .code { background: #c47f0a; }
         [data-theme="dark"] .promo-preorder { background: linear-gradient(90deg, #c47f0a, #c98a10); }
         [data-theme="dark"] .country-btn:hover { border-color: #c47f0a; }
+
+        /* ── Qur'an Classes interest popup (Shia Deal theme) ── */
+        .qc-popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .qc-popup-overlay.active { display: flex; }
+        .qc-popup-box {
+            background: #fff;
+            border: 3px solid var(--gold);
+            border-radius: 24px;
+            padding: 40px 36px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 16px 60px rgba(0,0,0,0.35);
+            position: relative;
+        }
+        .qc-popup-icon { font-size: 2.8rem; margin-bottom: 12px; }
+        .qc-popup-box h2 {
+            font-family: 'Bely Display', serif;
+            font-size: 1.55rem;
+            color: #3B2417;
+            margin-bottom: 10px;
+        }
+        .qc-popup-box p {
+            font-size: 0.95rem;
+            color: #5C4033;
+            margin-bottom: 26px;
+            line-height: 1.65;
+        }
+        .qc-popup-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .qc-popup-yes {
+            padding: 13px 30px;
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
+            color: #222;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.97rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px rgba(245,196,48,0.35);
+        }
+        .qc-popup-yes:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,196,48,0.45); }
+        .qc-popup-no {
+            padding: 13px 30px;
+            background: none;
+            border: 2px solid rgba(200,140,30,0.4);
+            color: #5C4033;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .qc-popup-no:hover { border-color: var(--gold); color: #3B2417; }
+        [data-theme="dark"] .qc-popup-box { background: #242420; }
+        [data-theme="dark"] .qc-popup-box h2 { color: #EFE0CE; }
+        [data-theme="dark"] .qc-popup-box p  { color: #C8A882; }
+        [data-theme="dark"] .qc-popup-no { border-color: rgba(196,127,10,0.4); color: #C8A882; }
+        [data-theme="dark"] .qc-popup-no:hover { border-color: #c47f0a; color: #EFE0CE; }
     </style>
 </head>
 <body>
@@ -1461,6 +1532,19 @@
             </div>
         </div>
     </section>
+
+    <!-- ── Qur'an Classes interest popup ── -->
+    <div class="qc-popup-overlay" id="qc-popup-overlay">
+        <div class="qc-popup-box">
+            <div class="qc-popup-icon">📖</div>
+            <h2>Qur'an Classes for Children</h2>
+            <p>Are you interested in enrolling your child in our Qur'an classes for children aged 5–14?</p>
+            <div class="qc-popup-btns">
+                <a href="interestform.html" class="qc-popup-yes">Yes, Register Interest!</a>
+                <button class="qc-popup-no" onclick="closeQcPopup()">Not Now</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ========== COUNTRY SELECTOR MODAL ========== -->
     <div class="country-modal-overlay" id="countryModalOverlay" onclick="closeCountryModal()">
@@ -1709,6 +1793,19 @@
             const url = STRIPE_PAYMENT_LINK + '?quantity=' + quantity;
             window.open(url, '_blank');
         }
+
+        /* ── Qur'an Classes popup ── */
+        function closeQcPopup() {
+            document.getElementById('qc-popup-overlay').classList.remove('active');
+            sessionStorage.setItem('qcPopupSeen', '1');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!sessionStorage.getItem('qcPopupSeen')) {
+                setTimeout(function() {
+                    document.getElementById('qc-popup-overlay').classList.add('active');
+                }, 2000);
+            }
+        });
 
         /* ============================================
            COUNTRY SELECTOR MODAL
