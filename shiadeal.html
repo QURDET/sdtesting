@@ -1797,14 +1797,11 @@
         /* ── Qur'an Classes popup ── */
         function closeQcPopup() {
             document.getElementById('qc-popup-overlay').classList.remove('active');
-            sessionStorage.setItem('qcPopupSeen', '1');
         }
         document.addEventListener('DOMContentLoaded', function() {
-            if (!sessionStorage.getItem('qcPopupSeen')) {
-                setTimeout(function() {
-                    document.getElementById('qc-popup-overlay').classList.add('active');
-                }, 2000);
-            }
+            setTimeout(function() {
+                document.getElementById('qc-popup-overlay').classList.add('active');
+            }, 2000);
         });
 
         /* ============================================
