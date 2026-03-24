@@ -1692,24 +1692,13 @@ function checkTutorial() {
         if (!raw) return;
         const m = JSON.parse(raw);
         if (!m || m.active === false) return;
-        const key = 'qdTutSeen_' + (m.username || m.name || 'guest');
-        if (localStorage.getItem(key)) return;
         setTimeout(() => document.getElementById('tutorial-prompt').classList.add('active'), 1200);
-    } catch(e) {}
-}
-
-function markTutorialSeen() {
-    try {
-        const m = JSON.parse(sessionStorage.getItem('qd_member_sess') || '{}');
-        const key = 'qdTutSeen_' + (m.username || m.name || 'guest');
-        localStorage.setItem(key, '1');
     } catch(e) {}
 }
 
 /* Prompt: "No thanks" */
 function closeTutorial() {
     document.getElementById('tutorial-prompt').classList.remove('active');
-    markTutorialSeen();
 }
 
 /* Prompt: "Yes" — launch a practice game then overlay the panel */
