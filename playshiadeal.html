@@ -925,9 +925,23 @@ const PROPERTIES = [
     { id:'p28', type:'property', color:'orange',   name:'Jannatul Baqi',           value:2, img:'cards/property_28.jpg' },
 ];
 
+const WILD_COLORS = {
+    1:  ['brown','teal'],
+    2:  ['train','purple'],
+    3:  ['pink','orange'],
+    4:  ['yellow','red'],
+    5:  ['train','teal'],
+    6:  ['train','green'],
+    7:  ['darkblue','green'],
+    8:  null,   // rainbow — any colour
+    9:  ['pink','orange'],
+    10: ['yellow','red'],
+    11: null,   // rainbow — any colour
+};
 const WILDS = [1,2,3,4,5,6,7,8,9,10,11].map(i => ({
     id:'w'+i, type:'wild', name:'Wild Card', value:0,
-    img:'cards/wild_'+String(i).padStart(2,'0')+'.jpg'
+    img:'cards/wild_'+String(i).padStart(2,'0')+'.jpg',
+    colors: WILD_COLORS[i]   // null = any colour; array = restricted to those colours
 }));
 
 const ACTIONS = [
@@ -1311,13 +1325,22 @@ function openModal(title, body) {
 function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
 
 function showWildModal() {
-    const opts = openModal('Wild Card — Choose a Colour', 'Which colour set should this wild join?');
+    const pw = G.pendingWild;
+    const allowed = pw.card.colors; // null = any; array = restricted
+    const title = allowed
+        ? 'Wild Card — Choose a Colour'
+        : 'Rainbow Wild — Choose Any Colour';
+    const body = allowed
+        ? 'This wild can only join: ' + allowed.map(c => COLOR_META[c]?.label || c).join(' or ')
+        : 'Which colour set should this wild join?';
+    const opts = openModal(title, body);
     Object.entries(COLOR_META).forEach(([col, meta]) => {
+        if (allowed && !allowed.includes(col)) return; // restrict dual-colour wilds
         const btn = document.createElement('button');
         btn.className = 'modal-option-btn'; btn.style.borderColor = meta.hex;
         btn.textContent = meta.icon + ' ' + meta.label;
         btn.onclick = () => {
-            const pw = G.pendingWild; const player = G.players[pw.playerIdx];
+            const player = G.players[pw.playerIdx];
             if (!player.props[col]) player.props[col] = [];
             player.props[col].push({ ...pw.card, color:col, name:'Wild ('+meta.label+')' });
             addLog(`${player.name} played a Wild as ${meta.label}.`, true);
@@ -1553,9 +1576,10 @@ function aiPlayCards() {
             return 10 + have*8 + (wouldComplete?80:0) + oppThreat;
         }
         if (card.type==='wild') {
-            // place on the colour closest to completion
+            // place on the colour closest to completion (within allowed colours)
+            const allowedCols = card.colors || Object.keys(COLOR_META);
             let best=0;
-            Object.entries(COLOR_META).forEach(([col,m])=>{ const c=(cp.props[col]||[]).length; const pct=c/m.needed; if(pct>best) best=pct; });
+            allowedCols.forEach(col=>{ const m=COLOR_META[col]; if(!m) return; const c=(cp.props[col]||[]).length; const pct=c/m.needed; if(pct>best) best=pct; });
             return 15 + best*40;
         }
         if (card.type==='action') {
@@ -1583,9 +1607,10 @@ function aiPlayCards() {
             cp.props[card.color].push(card);
             addLog(`${cp.name} played ${card.name}.`); checkWin(G.currentPlayer);
         } else if (card.type==='wild') {
-            // pick colour closest to completion
-            let bestCol=Object.keys(COLOR_META)[0], bestPct=-1;
-            Object.entries(COLOR_META).forEach(([col,meta])=>{ const cnt=(cp.props[col]||[]).length; const pct=cnt/meta.needed; if(cnt<meta.needed&&pct>bestPct){bestPct=pct;bestCol=col;} });
+            // pick colour closest to completion, restricted to allowed colours
+            const allowedCols = card.colors || Object.keys(COLOR_META);
+            let bestCol=allowedCols[0], bestPct=-1;
+            allowedCols.forEach(col=>{ const meta=COLOR_META[col]; if(!meta) return; const cnt=(cp.props[col]||[]).length; const pct=cnt/meta.needed; if(cnt<meta.needed&&pct>bestPct){bestPct=pct;bestCol=col;} });
             const meta=COLOR_META[bestCol];
             if(!cp.props[bestCol]) cp.props[bestCol]=[];
             cp.props[bestCol].push({...card,color:bestCol,name:'Wild ('+meta.label+')'});
