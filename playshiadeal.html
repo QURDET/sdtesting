@@ -461,6 +461,90 @@
         .credit-name { color:var(--gold); font-weight:600; }
         .copyright { font-size:0.8rem; color:var(--text3); margin-top:8px; }
 
+        /* ── TUTORIAL PROMPT ── */
+        #tutorial-prompt {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,0.72);
+            z-index:8000; align-items:center; justify-content:center;
+            backdrop-filter:blur(5px);
+        }
+        #tutorial-prompt.active { display:flex; }
+        .tut-prompt-box {
+            background:var(--card-bg); border:2px solid var(--gold);
+            border-radius:24px; padding:40px 36px; max-width:420px; width:90%;
+            text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.55);
+            animation:tutFadeIn 0.35s ease;
+        }
+        @keyframes tutFadeIn { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+        .tut-prompt-icon { font-size:3rem; margin-bottom:12px; }
+        .tut-prompt-title {
+            font-family:'Bely Display',serif; font-size:1.7rem; color:var(--gold); margin-bottom:10px;
+        }
+        .tut-prompt-sub { color:var(--text3); font-size:0.93rem; line-height:1.65; margin-bottom:28px; }
+        .tut-prompt-btns { display:flex; gap:12px; }
+        .tut-prompt-btns button {
+            flex:1; padding:13px; border-radius:12px;
+            font-family:'Poppins',sans-serif; font-size:0.95rem; font-weight:700;
+            cursor:pointer; transition:all 0.2s;
+        }
+        .tut-btn-yes  { background:var(--gold); color:#222; border:none; }
+        .tut-btn-yes:hover  { background:var(--gold2); transform:translateY(-2px); box-shadow:0 4px 16px rgba(var(--gold-rgb),0.4); }
+        .tut-btn-no   { background:none; border:2px solid var(--card-border); color:var(--text3); }
+        .tut-btn-no:hover   { border-color:var(--gold); color:var(--text); }
+
+        /* ── TUTORIAL WALKTHROUGH ── */
+        #tutorial-overlay {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,0.84);
+            z-index:8001; align-items:center; justify-content:center;
+            backdrop-filter:blur(6px);
+        }
+        #tutorial-overlay.active { display:flex; }
+        .tut-card {
+            background:var(--card-bg); border:2px solid var(--gold);
+            border-radius:24px; padding:36px 32px 28px; max-width:480px; width:92%;
+            text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.55);
+            position:relative; animation:tutFadeIn 0.3s ease;
+        }
+        .tut-skip-btn {
+            position:absolute; top:14px; right:16px;
+            background:none; border:none; color:var(--text3); font-size:0.78rem;
+            cursor:pointer; padding:4px 10px; border-radius:6px;
+            font-family:'Poppins',sans-serif; transition:background 0.2s;
+        }
+        .tut-skip-btn:hover { background:var(--bg3); color:var(--text); }
+        .tut-step-icon { font-size:3.6rem; margin-bottom:12px; }
+        .tut-step-counter {
+            font-size:0.72rem; font-weight:700; color:var(--text3);
+            letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;
+        }
+        .tut-step-title {
+            font-family:'Bely Display',serif; font-size:1.55rem; color:var(--gold);
+            margin-bottom:10px;
+        }
+        .tut-step-text {
+            color:var(--text); font-size:0.9rem; line-height:1.75;
+            margin-bottom:22px; min-height:80px;
+        }
+        .tut-step-text strong { color:var(--gold); }
+        .tut-dots {
+            display:flex; justify-content:center; gap:8px; margin-bottom:22px;
+        }
+        .tut-dot {
+            width:9px; height:9px; border-radius:50%;
+            background:var(--card-border); border:none; cursor:pointer; padding:0;
+            transition:background 0.2s, transform 0.2s;
+        }
+        .tut-dot.active { background:var(--gold); transform:scale(1.35); }
+        .tut-nav { display:flex; gap:10px; justify-content:center; }
+        .tut-nav button {
+            padding:11px 28px; border-radius:12px;
+            font-family:'Poppins',sans-serif; font-size:0.95rem; font-weight:700;
+            cursor:pointer; transition:all 0.2s;
+        }
+        .tut-nav .btn-prev { background:none; border:2px solid var(--card-border); color:var(--text3); }
+        .tut-nav .btn-prev:hover { border-color:var(--gold); color:var(--text); }
+        .tut-nav .btn-next { background:var(--gold); color:#222; border:none; }
+        .tut-nav .btn-next:hover { background:var(--gold2); transform:translateY(-2px); }
+
         @media(max-width:700px) {
             .lobby-title { font-size:2.2rem; }
             .mode-cards { gap:16px; }
@@ -470,6 +554,7 @@
             .game-topbar { font-size:0.78rem; }
             .table-middle { gap:8px; padding:10px 12px; }
             .hand-fan { height:118px; }
+            .tut-card { padding:28px 20px 22px; }
         }
     </style>
 </head>
@@ -483,6 +568,35 @@
         <p class="gate-sub">Play Online is exclusive to Qur'an Detectives members.<br>Log in to your member account to play.</p>
         <a href="members.html" class="gate-btn gate-btn-primary">🎫 Go to Member Login</a>
         <a href="index.html" class="gate-btn gate-btn-secondary">← Back to Home</a>
+    </div>
+</div>
+
+<!-- ── TUTORIAL PROMPT ── -->
+<div id="tutorial-prompt">
+    <div class="tut-prompt-box">
+        <div class="tut-prompt-icon">🕌</div>
+        <div class="tut-prompt-title">First time here?</div>
+        <p class="tut-prompt-sub">Would you like a quick tutorial on how to play Shia Deal before you jump in?</p>
+        <div class="tut-prompt-btns">
+            <button class="tut-btn-yes" onclick="startTutorial()">Yes, show me! 🎴</button>
+            <button class="tut-btn-no" onclick="closeTutorial()">No thanks</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── TUTORIAL WALKTHROUGH ── -->
+<div id="tutorial-overlay">
+    <div class="tut-card">
+        <button class="tut-skip-btn" onclick="closeTutorial()">Skip ✕</button>
+        <div class="tut-step-icon" id="tut-icon">🎴</div>
+        <div class="tut-step-counter" id="tut-counter">Step 1 of 10</div>
+        <div class="tut-step-title" id="tut-title">Title</div>
+        <div class="tut-step-text" id="tut-text">Text</div>
+        <div class="tut-dots" id="tut-dots"></div>
+        <div class="tut-nav">
+            <button class="btn-prev" id="tut-prev-btn" onclick="tutNav(-1)">← Back</button>
+            <button class="btn-next" id="tut-next-btn" onclick="tutNav(1)">Next →</button>
+        </div>
     </div>
 </div>
 
@@ -1553,6 +1667,140 @@ function addLog(msg, highlight) {
 }
 function restartGame() { document.getElementById('win-overlay').classList.remove('active'); startGame(); }
 updateNameInputs();
+
+/* ════════════════════════════════════════════════════
+   TUTORIAL SYSTEM
+════════════════════════════════════════════════════ */
+const TUT_STEPS = [
+    {
+        icon: '🕌',
+        title: 'Welcome to Shia Deal!',
+        text: 'Let\'s walk you through everything in just a few steps. You can skip at any time.'
+    },
+    {
+        icon: '🏆',
+        title: 'The Goal',
+        text: 'Be the <strong>first player to collect 3 complete property sets</strong> of different colours. Each colour needs 2–4 matching property cards to complete.'
+    },
+    {
+        icon: '🃏',
+        title: 'Drawing Cards',
+        text: 'At the start of your turn, click the <strong>Draw Pile on the left</strong> twice to draw 2 cards into your hand. You must draw before you can play.'
+    },
+    {
+        icon: '🖐️',
+        title: 'Your Hand',
+        text: 'Your cards fan out at the <strong>bottom of the screen</strong>. You can play up to <strong>3 cards per turn</strong>. Hover to see a card clearly — click it to play.'
+    },
+    {
+        icon: '🏠',
+        title: 'Property Cards',
+        text: 'Playing a Property card places it in <strong>your area in front of you</strong>. Collect all cards of the same colour to <strong>complete a set</strong> and lock it in!'
+    },
+    {
+        icon: '💰',
+        title: 'Money Cards',
+        text: 'Play Money cards into your <strong>Bank</strong>. When opponents play action cards against you, money is taken from your bank — keep it stocked!'
+    },
+    {
+        icon: '⚡',
+        title: 'Action Cards',
+        text: '<strong>Pass Go</strong> — draw 2 extra cards.<br><strong>Eid Mubarak</strong> — collect £2M from every player.<br><strong>Thawab Deal</strong> — steal a property from someone.<br><strong>Do Not Agree</strong> — block any action used against you.'
+    },
+    {
+        icon: '🌈',
+        title: 'Wild Cards',
+        text: 'Wild Cards can join <strong>any colour set</strong>. When you play one, a menu appears — pick whichever colour you need to complete a set fastest.'
+    },
+    {
+        icon: '♻️',
+        title: 'Discard Pile',
+        text: 'Action cards go to the <strong>Discard Pile on the right</strong> after being played. If the draw deck runs out, the discard pile gets reshuffled automatically.'
+    },
+    {
+        icon: '✅',
+        title: 'Ending Your Turn',
+        text: 'After playing your cards, click <strong>End Turn</strong>. Your hand fans off the screen and passes to the next player. You can\'t hold more than 7 cards at the end of a turn.'
+    },
+    {
+        icon: '🌙',
+        title: 'You\'re Ready!',
+        text: 'That\'s everything — pick a mode below and start playing. <strong>Good luck, and bismillah! 🤲</strong>'
+    },
+];
+
+let tutStep = 0;
+
+function checkTutorial() {
+    try {
+        const raw = sessionStorage.getItem('qd_member_sess');
+        if (!raw) return;
+        const m = JSON.parse(raw);
+        if (!m || m.active === false) return;
+        const key = 'qdTutSeen_' + (m.username || m.name || 'guest');
+        if (localStorage.getItem(key)) return;
+        setTimeout(() => document.getElementById('tutorial-prompt').classList.add('active'), 1200);
+    } catch(e) {}
+}
+
+function markTutorialSeen() {
+    try {
+        const m = JSON.parse(sessionStorage.getItem('qd_member_sess') || '{}');
+        const key = 'qdTutSeen_' + (m.username || m.name || 'guest');
+        localStorage.setItem(key, '1');
+    } catch(e) {}
+}
+
+function startTutorial() {
+    document.getElementById('tutorial-prompt').classList.remove('active');
+    tutStep = 0;
+    renderTutStep();
+    document.getElementById('tutorial-overlay').classList.add('active');
+}
+
+function closeTutorial() {
+    document.getElementById('tutorial-prompt').classList.remove('active');
+    document.getElementById('tutorial-overlay').classList.remove('active');
+    markTutorialSeen();
+}
+
+function tutNav(dir) {
+    const next = tutStep + dir;
+    if (next >= TUT_STEPS.length) { closeTutorial(); return; }
+    if (next < 0) return;
+    tutStep = next;
+    renderTutStep();
+}
+
+function renderTutStep() {
+    const s = TUT_STEPS[tutStep];
+    const total = TUT_STEPS.length;
+    document.getElementById('tut-icon').textContent   = s.icon;
+    document.getElementById('tut-title').textContent  = s.title;
+    document.getElementById('tut-text').innerHTML     = s.text;
+    document.getElementById('tut-counter').textContent = `Step ${tutStep + 1} of ${total}`;
+
+    // Dots
+    const dots = document.getElementById('tut-dots');
+    dots.innerHTML = '';
+    TUT_STEPS.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'tut-dot' + (i === tutStep ? ' active' : '');
+        d.onclick = () => { tutStep = i; renderTutStep(); };
+        dots.appendChild(d);
+    });
+
+    // Buttons
+    const isLast = tutStep === total - 1;
+    const isFirst = tutStep === 0;
+    const prev = document.getElementById('tut-prev-btn');
+    const next = document.getElementById('tut-next-btn');
+    prev.style.visibility = isFirst ? 'hidden' : 'visible';
+    next.textContent = isLast ? '🎮 Start Playing' : 'Next →';
+    next.className   = 'btn-next';
+}
+
+checkTutorial();
 </script>
 </body>
 </html>
