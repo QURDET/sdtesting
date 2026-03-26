@@ -18,6 +18,19 @@
         --text3:   #9B7B6E;
         --border:  #E8D5C4;
     }
+    body.dark {
+        --bg:     #1A1210;
+        --card:   #241815;
+        --text:   #F0E6DC;
+        --text2:  #C9B5A8;
+        --text3:  #8A7068;
+        --border: #3D2E28;
+    }
+    body.dark td           { border-bottom-color: #3D2E28; }
+    body.dark .all-good    { background: #1A2E20; color: #6FCF97; border-color: #6FCF97; }
+    body.dark .status-active   { background: #1A2E20; color: #6FCF97; }
+    body.dark .status-inactive { background: #2E1A1A; color: #EB5757; }
+    body.dark #auth-box    { box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
@@ -191,6 +204,7 @@
             <div class="header-title">🛠️ Site Maintenance</div>
         </div>
         <div class="header-right">
+            <button class="btn btn-outline" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
             <a href="admin.html" class="btn btn-outline">← Back to Admin</a>
         </div>
     </header>
@@ -328,6 +342,19 @@
 </div><!-- /maint-page -->
 
 <script>
+// ── THEME ────────────────────────────────────────────────────────────────────
+function applyTheme(dark) {
+    document.body.classList.toggle('dark', dark);
+    var btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = dark ? '☀️' : '🌙';
+}
+function toggleTheme() {
+    var dark = !document.body.classList.contains('dark');
+    localStorage.setItem('qdTheme', dark ? 'dark' : 'light');
+    applyTheme(dark);
+}
+applyTheme(localStorage.getItem('qdTheme') === 'dark');
+
 var maintUser = null;
 
 // ── AUTH ────────────────────────────────────────────────────────────────────
