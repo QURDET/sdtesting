@@ -551,11 +551,6 @@ async function runSiteHealth() {
     var expiredActive = members.filter(function(m){ return m.active!==false&&m.expiryDate&&new Date(m.expiryDate)<today; });
     if (expiredActive.length) alerts.push({type:'error', msg:expiredActive.length+' expired account(s) still marked active: '+expiredActive.map(function(m){return m.name;}).join(', ')});
 
-    var stuckOrders = orders.filter(function(o){
-        if (o.status!=='processing'&&o.status!=='pending') return false;
-        return o.date&&(today-new Date(o.date))>7*86400000;
-    });
-    if (stuckOrders.length) alerts.push({type:'warn', msg:stuckOrders.length+' order(s) have been processing for over 7 days.'});
 
     if (lowStock.length)  alerts.push({type:'warn', msg:'Low stock: '+lowStock.map(function(i){return i.name||i.title||'item';}).join(', ')});
     if (unreadMsgs>0)     alerts.push({type:'info', msg:unreadMsgs+' unread contact message(s) waiting.'});
