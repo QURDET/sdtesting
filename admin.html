@@ -676,18 +676,15 @@
                 <div class="nav-item" onclick="showTab('team')" id="nav-team">
                     <span class="icon">👥</span> Team
                 </div>
-                <div class="nav-item" onclick="showTab('stripe')" id="nav-stripe">
-                    <span class="icon">💳</span> Stripe
-                </div>
+                <a href="sitemaintenance.html" class="nav-item" id="nav-stripe" style="text-decoration:none;color:inherit">
+                    <span class="icon">⚙️</span> Maintenance
+                </a>
                 <div class="nav-item" onclick="showTab('messages')" id="nav-messages">
                     <span class="icon">✉️</span> Messages <span id="unread-badge" style="display:none;background:#7B3F5E;color:#fff;font-size:0.7rem;padding:1px 7px;border-radius:20px;margin-left:4px;font-weight:700"></span>
                 </div>
                 <div class="nav-item" onclick="showTab('members')" id="nav-members">
                     <span class="icon">🎫</span> Members
                 </div>
-                <a href="sitehealth.html" class="nav-item" id="nav-sitehealth" style="display:none;text-decoration:none;color:inherit">
-                    <span class="icon">🛠️</span> Site Health
-                </a>
             </nav>
             <div class="sidebar-footer">
                 <div class="user-info">
@@ -832,85 +829,6 @@
                 </div>
 
                 <!-- STRIPE -->
-                <div id="tab-stripe" class="tab-section">
-                    <!-- No key state -->
-                    <div id="stripe-setup-prompt">
-                        <div style="max-width:460px;margin:60px auto;text-align:center">
-                            <div style="font-size:3rem;margin-bottom:16px">💳</div>
-                            <h3 style="font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;color:#3B2417;margin-bottom:12px">Connect Stripe</h3>
-                            <p style="color:#9B7B6E;font-size:0.88rem;margin-bottom:24px;line-height:1.6">Add your Stripe API key to view real payment data, track revenue, and import orders directly into the staff panel.</p>
-                            <button class="btn btn-purple" onclick="openStripeSetupModal()">Connect Stripe</button>
-                        </div>
-                    </div>
-                    <!-- Loading state -->
-                    <div id="stripe-loading" style="display:none;text-align:center;padding:60px">
-                        <div style="font-size:2.5rem;margin-bottom:12px">⏳</div>
-                        <p style="color:#9B7B6E">Loading payments from Stripe…</p>
-                    </div>
-                    <!-- Error state -->
-                    <div id="stripe-error" style="display:none;background:white;border-radius:16px;padding:32px;max-width:480px;margin:40px auto;text-align:center;box-shadow:0 2px 10px rgba(59,36,23,0.07)">
-                        <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
-                        <p style="color:#C0392B;font-size:0.88rem;margin-bottom:20px" id="stripe-error-msg">Could not connect to Stripe.</p>
-                        <div style="display:flex;gap:10px;justify-content:center">
-                            <button class="btn btn-outline" onclick="openStripeSetupModal()">Update API Key</button>
-                            <button class="btn btn-purple" onclick="loadStripe()">Retry</button>
-                        </div>
-                    </div>
-                    <!-- Connected state -->
-                    <div id="stripe-connected" style="display:none">
-                        <div class="section-header">
-                            <h3>Stripe Payments</h3>
-                            <div style="display:flex;gap:8px;align-items:center">
-                                <span id="stripe-mode-badge"></span>
-                                <button class="btn btn-outline btn-sm" onclick="openStripeSetupModal()">⚙ Settings</button>
-                                <button class="btn btn-purple btn-sm" onclick="loadStripe()">↻ Refresh</button>
-                            </div>
-                        </div>
-                        <div class="stats-grid" id="stripe-stats-grid" style="margin-bottom:24px"></div>
-                        <div class="table-card">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Customer</th>
-                                        <th>Location</th>
-                                        <th>Amount</th>
-                                        <th>Description</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="stripe-tbody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-                <!-- GOOGLE OAUTH SECTION -->
-                <div id="google-oauth-section" style="margin-top:36px">
-                    <div class="section-header"><h3>Google Sign-In</h3></div>
-                    <div id="google-oauth-prompt" style="background:white;border-radius:16px;padding:32px;max-width:480px;text-align:center;box-shadow:0 2px 10px rgba(59,36,23,0.07)">
-                        <div style="font-size:3rem;margin-bottom:16px">&#128274;</div>
-                        <h4 style="font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;color:#3B2417;margin-bottom:10px">Google Sign-In</h4>
-                        <p style="color:#9B7B6E;font-size:0.85rem;margin-bottom:20px;line-height:1.6">Let team members sign in with their Google accounts. You need a Google Client ID from Google Cloud Console.</p>
-                        <button class="btn btn-purple" onclick="openGoogleOAuthModal()">Set Up Google Sign-In</button>
-                    </div>
-                    <div id="google-oauth-connected" style="display:none;background:white;border-radius:16px;padding:24px;max-width:480px;box-shadow:0 2px 10px rgba(59,36,23,0.07)">
-                        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-                            <div style="min-width:0">
-                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-                                    <span style="font-weight:700;color:#3B2417">Google Sign-In</span>
-                                    <span style="background:#D4EDDA;color:#155724;font-size:0.72rem;padding:2px 8px;border-radius:20px;font-weight:600">Active</span>
-                                </div>
-                                <div style="font-size:0.75rem;color:#9B7B6E;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="google-client-id-preview"></div>
-                            </div>
-                            <button class="btn btn-outline btn-sm" style="flex-shrink:0" onclick="openGoogleOAuthModal()">&#9881; Edit</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                </div><!-- /tab-stripe -->
 
                 <!-- INTEREST -->
 
@@ -1146,29 +1064,6 @@
 </div>
 
 <!-- ── STRIPE SETUP MODAL ── -->
-<div class="modal-overlay" id="stripe-modal">
-    <div class="modal">
-        <h3>Stripe Settings</h3>
-        <p style="color:#9B7B6E;font-size:0.84rem;margin-bottom:20px;line-height:1.6">
-            Enter your Stripe API key. For security, create a <strong>Restricted Key</strong> in your Stripe Dashboard with read-only access to Charges, Customers, and Payment Intents.
-        </p>
-        <div class="form-group">
-            <label>Stripe API Key</label>
-            <input type="password" id="stripe-key-input" placeholder="sk_live_... or sk_test_... or rk_live_...">
-        </div>
-        <div id="stripe-key-visible" style="display:none;margin-top:-8px;margin-bottom:12px">
-            <small id="stripe-key-preview" style="color:#9B7B6E;font-size:0.78rem;font-family:monospace"></small>
-        </div>
-        <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#5C4033;margin-bottom:20px;cursor:pointer">
-            <input type="checkbox" id="stripe-key-show" onchange="toggleStripeKeyVisibility()"> Show key
-        </label>
-        <div class="modal-actions">
-            <button class="btn btn-outline" onclick="closeModal('stripe-modal')">Cancel</button>
-            <button class="btn btn-red btn-sm" onclick="disconnectStripe()" style="margin-right:auto">Disconnect</button>
-            <button class="btn btn-purple" onclick="saveStripeSettings()">Save &amp; Connect</button>
-        </div>
-    </div>
-</div>
 
 <!-- ── MEMBER MODAL ── -->
 <div class="modal-overlay" id="member-modal">
@@ -1234,23 +1129,6 @@
 </div>
 
 <!-- ── GOOGLE OAUTH MODAL ── -->
-<div class="modal-overlay" id="google-oauth-modal">
-    <div class="modal">
-        <h3>Google Sign-In Setup</h3>
-        <p style="color:#9B7B6E;font-size:0.84rem;margin-bottom:20px;line-height:1.6">
-            Create OAuth 2.0 credentials in <strong>Google Cloud Console</strong>, add your site URL as an authorised JavaScript origin, then paste the Client ID below.
-        </p>
-        <div class="form-group">
-            <label>Google Client ID</label>
-            <input type="text" id="google-client-id-input" placeholder="xxxxxxxxxxxx.apps.googleusercontent.com">
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-outline" onclick="closeModal('google-oauth-modal')">Cancel</button>
-            <button class="btn btn-red btn-sm" onclick="disconnectGoogle()" style="margin-right:auto">Disconnect</button>
-            <button class="btn btn-purple" onclick="saveGoogleSettings()">Save &amp; Enable</button>
-        </div>
-    </div>
-</div>
 
 <script>
 // ─────────────────────────────────────────────
@@ -1377,7 +1255,6 @@ function showPanel() {
     document.getElementById('nav-team').style.display         = isAdmin   ? 'flex'  : 'none';
     document.getElementById('nav-stripe').style.display       = isAdmin   ? 'flex'  : 'none';
     document.getElementById('nav-members').style.display      = isAdmin   ? 'flex'  : 'none';
-    document.getElementById('nav-sitehealth').style.display   = isBuilder ? 'flex'  : 'none';
     document.getElementById('btn-add-product').style.display  = isViewer  ? 'none'  : '';
     document.getElementById('btn-add-order').style.display    = isViewer  ? 'none'  : '';
     document.getElementById('btn-add-member').style.display   = isAdmin   ? ''      : 'none';
@@ -1407,7 +1284,7 @@ function showPanel() {
 // ─────────────────────────────────────────────
 // NAVIGATION
 // ─────────────────────────────────────────────
-const TAB_TITLES = { dashboard: 'Dashboard', inventory: 'Inventory', orders: 'Orders', team: 'Team', stripe: 'Stripe Payments', messages: 'Messages', members: 'Members' };
+const TAB_TITLES = { dashboard: 'Dashboard', inventory: 'Inventory', orders: 'Orders', team: 'Team', messages: 'Messages', members: 'Members' };
 
 function showTab(tab) {
     document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
@@ -1420,7 +1297,6 @@ function showTab(tab) {
     if (tab === 'inventory') renderInventory();
     if (tab === 'orders')    { renderOrders(); if (getStripeKey()) syncStripeOrders(); }
     if (tab === 'team')      renderTeam();
-    if (tab === 'stripe')    renderStripe();
     if (tab === 'messages')  loadAllMessages();
     if (tab === 'members')   renderMembers();
 }
@@ -2005,101 +1881,11 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 
-// STRIPE
+// STRIPE (key storage + order sync only — configuration is in sitemaintenance.html)
 function getStripeKey(){try{return atob(localStorage.getItem('qd_sk')||'');}catch(e){return '';}}
-function setStripeKey(k){localStorage.setItem('qd_sk',btoa(k));}
-function clearStripeKey(){localStorage.removeItem('qd_sk');}
-function openStripeSetupModal(){
-    document.getElementById('stripe-key-input').value=getStripeKey();
-    document.getElementById('stripe-key-show').checked=false;
-    document.getElementById('stripe-key-input').type='password';
-    document.getElementById('stripe-key-visible').style.display='none';
-    openModal('stripe-modal');
-}
-function toggleStripeKeyVisibility(){
-    document.getElementById('stripe-key-input').type=document.getElementById('stripe-key-show').checked?'text':'password';
-}
-function saveStripeSettings(){
-    var key=document.getElementById('stripe-key-input').value.trim();
-    if(!key){alert('Please enter a Stripe API key.');return;}
-    if(!key.startsWith("sk_")&&!key.startsWith("rk_")){alert("Invalid key format. Use sk_ or rk_ prefix.");return;}
-    setStripeKey(key);closeModal('stripe-modal');var sb=document.getElementById('btn-sync-stripe');if(sb)sb.style.display='';loadStripe();
-}
-function disconnectStripe(){
-    if(!confirm('Remove Stripe API key?'))return;
-    clearStripeKey();closeModal('stripe-modal');renderStripe();
-}
-function renderStripe(){
-    var key=getStripeKey();
-    document.getElementById('stripe-setup-prompt').style.display=key?'none':'block';
-    document.getElementById('stripe-connected').style.display='none';
-    document.getElementById('stripe-loading').style.display='none';
-    document.getElementById('stripe-error').style.display='none';
-    if(key)loadStripe();
-}
-async function loadStripe(){
-    var key=getStripeKey();
-    if(!key){renderStripe();return;}
-    document.getElementById('stripe-setup-prompt').style.display='none';
-    document.getElementById('stripe-connected').style.display='none';
-    document.getElementById('stripe-loading').style.display='block';
-    document.getElementById('stripe-error').style.display='none';
-    try{
-        var isLive=key.startsWith('sk_live')||key.startsWith('rk_live');
-        var liveBadge='<span class="badge" style="background:#D4EDDA;color:#155724">&#9679; Live Mode</span>';
-        var testBadge='<span class="badge" style="background:#FFF3CD;color:#856404">&#9679; Test Mode</span>';
-        document.getElementById('stripe-mode-badge').innerHTML=isLive?liveBadge:testBadge;
-        var hdr={'Authorization':'Bearer '+key};
-        var piRes=await fetch('https://api.stripe.com/v1/payment_intents?limit=100&expand[]=data.charges',{headers:hdr});
-        var balRes=await fetch('https://api.stripe.com/v1/balance',{headers:hdr});
-        if(!piRes.ok){var ej=await piRes.json();throw new Error(ej.error?ej.error.message:'Stripe error '+piRes.status);}
-        var pd=await piRes.json();var bd=balRes.ok?await balRes.json():null;
-        var pays=pd.data||[];
-        var succ=pays.filter(function(p){return p.status==='succeeded';});
-        var rev=succ.reduce(function(a,p){return a+(p.amount_received||p.amount);},0);
-        var cur=pays.length?pays[0].currency:'gbp';
-        var bHtml='';
-        if(bd&&bd.available){
-            var b=bd.available.find(function(x){return x.currency===cur;})||bd.available[0];
-            if(b)bHtml='<div class="stat-card purple-card"><div class="s-label">Available Balance</div><div class="s-val">'+fmtAmt(b.amount,b.currency)+'</div><div class="s-sub">'+b.currency.toUpperCase()+' in Stripe</div></div>';
-        }
-        var statsHtml=bHtml
-            +'<div class="stat-card"><div class="s-label">Revenue (Stripe)</div><div class="s-val">'+fmtAmt(rev,cur)+'</div><div class="s-sub">'+succ.length+' succeeded</div></div>'
-            +'<div class="stat-card"><div class="s-label">Total Payments</div><div class="s-val">'+ pays.length +'</div><div class="s-sub">'+ pays.filter(function(p){return p.status==='requires_payment_method';}).length +' pending</div></div>';
-        document.getElementById('stripe-stats-grid').innerHTML=statsHtml;
-        var iids=(await getOrders()).filter(function(o){return o.stripeId;}).map(function(o){return o.stripeId;});
-        var sm={succeeded:'badge-delivered',requires_payment_method:'badge-pending',requires_confirmation:'badge-pending',requires_action:'badge-processing',processing:'badge-processing',canceled:'badge-cancelled',requires_capture:'badge-processing'};
-        document.getElementById('stripe-tbody').innerHTML=pays.length?pays.map(function(p){
-            var dt=new Date(p.created*1000).toLocaleDateString('en-GB');
-            var ch=(p.charges&&p.charges.data&&p.charges.data[0])||null;
-            var bd=ch&&ch.billing_details||null;
-            var nm=(p.shipping&&p.shipping.name)||(p.shipping&&p.shipping.address&&p.shipping.address.line1)||(bd&&bd.name)||(p.metadata&&p.metadata.customer_name)||p.receipt_email||'—';
-            var em=(p.receipt_email&&p.receipt_email!==nm)?'<br><small style="color:#9B7B6E">'+p.receipt_email+'</small>':'';
-            var country=(p.shipping&&p.shipping.address&&p.shipping.address.country)||(bd&&bd.address&&bd.address.country)||(p.metadata&&p.metadata.country)||'—';
-            var amt=fmtAmt(p.amount_received||p.amount,p.currency);
-            var dsc=p.description||(p.metadata&&p.metadata.product)||'—';
-            var bc=sm[p.status]||'badge-pending';var sl=cap(p.status.replace(/_/g,' '));
-            var ai=iids.indexOf(p.id)>-1;
-            var isLiveKey=getStripeKey().startsWith('sk_live')||getStripeKey().startsWith('rk_live');
-            var stripeLinkBase=isLiveKey?'https://dashboard.stripe.com/payments/':'https://dashboard.stripe.com/test/payments/';
-            var stripeLink='<a href="'+stripeLinkBase+p.id+'" target="_blank" class="btn btn-sm btn-outline">View ↗</a>';
-            return '<tr><td>'+dt+'</td><td>'+nm+em+'</td><td>'+country+'</td><td><strong>'+amt+'</strong></td><td style="color:#9B7B6E;font-size:0.82rem">'+dsc+'</td><td><span class="badge '+bc+'">'+sl+'</span></td><td>'+stripeLink+'</td></tr>';
-        }).join(''):'<tr><td colspan="6"><div class="empty-state"><div class="e-icon">&#128179;</div><p>No payments found</p></div></td></tr>';
-        document.getElementById('stripe-loading').style.display='none';
-        document.getElementById('stripe-connected').style.display='block';
-    }catch(err){
-        document.getElementById('stripe-loading').style.display='none';
-        document.getElementById('stripe-error').style.display='block';
-        document.getElementById('stripe-error-msg').textContent=err.message;
-    }
-}
-function fmtAmt(amount,currency){
-    var s={gbp:'£',eur:'€',usd:'$'};
-    return (s[(currency||'').toLowerCase()]||((currency||'').toUpperCase()+' '))+(amount/100).toFixed(2);
-}
 async function syncStripeOrders(){
     var key=getStripeKey();
-    if(!key){alert('Connect Stripe first (use the Stripe tab to add your API key).');return;}
+    if(!key){alert('Connect Stripe first via Site Maintenance (⚙️ in the sidebar).');return;}
     var btn=document.getElementById('btn-sync-stripe');
     var origText=btn?btn.textContent:'';
     if(btn){btn.textContent='⟳ Syncing…';btn.disabled=true;}
@@ -2160,7 +1946,7 @@ async function importStripeOrder(piId){
         var dsc=pi.description||(pi.metadata&&pi.metadata.product)||'Stripe Payment';
         orders.push({id:nid,customer:cust,items:dsc,total:amt,status:'packed',date:dt,notes:'Imported from Stripe: '+piId,stripeId:piId,country:country,shipping:shipping});
         await saveOrders(orders);alert('Order '+nid+' created! Go to the Orders tab.');
-        await renderDashboard();loadStripe();
+        await renderDashboard();
     }catch(err){alert('Import failed: '+err.message);}
 }
 
@@ -2179,7 +1965,6 @@ async function loadGoogleSettings() {
         if (!r.ok) return;
         const s = await r.json();
         if (s.googleClientId) initGoogleSignIn(s.googleClientId);
-        updateGoogleOAuthUI(s.googleClientId || '');
     } catch {}
 }
 
@@ -2233,64 +2018,6 @@ async function handleGoogleCredential(response) {
     }
 }
 
-function updateGoogleOAuthUI(clientId) {
-    const prompt = document.getElementById('google-oauth-prompt');
-    const connected = document.getElementById('google-oauth-connected');
-    if (!prompt || !connected) return;
-    if (clientId) {
-        prompt.style.display = 'none';
-        connected.style.display = 'block';
-        const preview = document.getElementById('google-client-id-preview');
-        if (preview) preview.textContent = clientId.length > 45 ? clientId.slice(0, 42) + '...' : clientId;
-    } else {
-        prompt.style.display = 'block';
-        connected.style.display = 'none';
-    }
-}
-
-async function openGoogleOAuthModal() {
-    try {
-        const r = await fetch('/api/settings');
-        const s = r.ok ? await r.json() : {};
-        document.getElementById('google-client-id-input').value = s.googleClientId || '';
-    } catch {}
-    openModal('google-oauth-modal');
-}
-
-async function saveGoogleSettings() {
-    const clientId = document.getElementById('google-client-id-input').value.trim();
-    if (!clientId) { alert('Please enter a Google Client ID.'); return; }
-    if (!clientId.includes('.apps.googleusercontent.com')) {
-        alert('Invalid format. Google Client IDs end with .apps.googleusercontent.com');
-        return;
-    }
-    try {
-        const r = await fetch('/api/settings', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ googleClientId: clientId }),
-        });
-        if (r.ok) {
-            closeModal('google-oauth-modal');
-            initGoogleSignIn(clientId);
-            updateGoogleOAuthUI(clientId);
-        }
-    } catch { alert('Failed to save settings.'); }
-}
-
-async function disconnectGoogle() {
-    if (!confirm('Remove Google Sign-In? Team members will no longer be able to sign in with Google.')) return;
-    try {
-        await fetch('/api/settings', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ googleClientId: '' }),
-        });
-        closeModal('google-oauth-modal');
-        updateGoogleOAuthUI('');
-        document.getElementById('google-signin-section').style.display = 'none';
-    } catch { alert('Failed to remove settings.'); }
-}
 
 // Init Google Sign-In on page load
 loadGoogleSettings();

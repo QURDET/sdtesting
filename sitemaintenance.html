@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Maintenance — QD Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg:      #FAF6F1;
+        --card:    #fff;
+        --gold:    #C9A84C;
+        --purple:  #7B3F5E;
+        --orange:  #E8872A;
+        --text:    #3B2417;
+        --text2:   #5C4033;
+        --text3:   #9B7B6E;
+        --border:  #E8D5C4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── AUTH GATE ── */
+    #auth-gate {
+        display: flex; align-items: center; justify-content: center;
+        min-height: 100vh; padding: 24px;
+    }
+    #auth-box {
+        background: var(--card); border-radius: 20px; padding: 40px 36px;
+        box-shadow: 0 8px 32px rgba(59,36,23,0.12); width: 100%; max-width: 400px; text-align: center;
+    }
+    #auth-box h2 { font-family: 'Nunito', sans-serif; font-size: 1.5rem; margin-bottom: 8px; }
+    #auth-box p  { font-size: 0.85rem; color: var(--text3); margin-bottom: 24px; }
+    .auth-input {
+        width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+        border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
+        color: var(--text); background: var(--bg); margin-bottom: 12px; outline: none;
+        transition: border-color 0.2s;
+    }
+    .auth-input:focus { border-color: var(--purple); }
+    .auth-btn {
+        width: 100%; padding: 11px; background: var(--purple); color: #fff; border: none;
+        border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
+        font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+    }
+    .auth-btn:hover { opacity: 0.88; }
+    #auth-error { color: #C0392B; font-size: 0.82rem; margin-top: 10px; display: none; }
+    .or-divider { display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--text3); font-size:0.8rem; }
+    .or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    #google-signin-section { display:none; }
+    #google-btn-container  { display:flex; justify-content:center; }
+
+    /* ── MAIN PAGE ── */
+    #maint-page { display: none; }
+
+    header {
+        background: var(--card); border-bottom: 1.5px solid var(--border);
+        padding: 14px 28px; display: flex; align-items: center;
+        justify-content: space-between; gap: 16px; flex-wrap: wrap; position: sticky; top: 0; z-index: 100;
+    }
+    .header-left   { display: flex; align-items: center; gap: 14px; }
+    .header-logo   { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.2rem; color: var(--text); }
+    .header-logo span { color: var(--gold); }
+    .header-title  { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text2); }
+    .header-right  { display: flex; align-items: center; gap: 10px; }
+    .btn {
+        padding: 7px 16px; border-radius: 8px; font-family: 'Poppins', sans-serif;
+        font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; text-decoration: none;
+    }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text2); }
+    .btn-outline:hover { border-color: var(--purple); color: var(--purple); }
+    .btn-purple { background: var(--purple); color: #fff; }
+    .btn-purple:hover { opacity: 0.88; }
+    .btn-red    { background: #C0392B; color: #fff; }
+    .btn-red:hover { opacity: 0.88; }
+    .btn-sm     { padding: 5px 11px; font-size: 0.74rem; }
+
+    /* ── INNER TABS ── */
+    .tabs-bar {
+        display: flex; gap: 6px; padding: 20px 28px 0;
+        border-bottom: 1.5px solid var(--border); background: var(--card);
+    }
+    .tab-btn {
+        padding: 9px 18px; border-radius: 8px 8px 0 0; font-family: 'Poppins', sans-serif;
+        font-size: 0.84rem; font-weight: 600; cursor: pointer; border: none;
+        background: transparent; color: var(--text3); transition: all 0.2s;
+        border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+    }
+    .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); background: var(--bg); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+    .section { margin-bottom: 28px; }
+    .section-title {
+        font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 900;
+        color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .grid-sm   { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+    .grid-md   { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+    .grid-lg   { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+    .sh-card {
+        border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 5px;
+    }
+    .sh-card-icon  { font-size: 1.4rem; }
+    .sh-card-value { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.15rem; }
+    .sh-card-label { font-size: 0.74rem; font-weight: 600; color: var(--text3); }
+
+    .alert-item { border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; font-size: 0.85rem; border-left: 4px solid; }
+    .all-good   { font-size: 0.88rem; padding: 12px 16px; background: #EAFAF1; border-radius: 10px; border-left: 4px solid #1E8449; color: #1E8449; }
+    #last-run   { font-size: 0.78rem; color: var(--text3); text-align: right; margin-bottom: 20px; }
+
+    /* ── SETTINGS CARDS ── */
+    .config-card {
+        background: var(--card); border-radius: 16px; padding: 24px 28px;
+        box-shadow: 0 2px 10px rgba(59,36,23,0.07); margin-bottom: 16px;
+    }
+    .config-card h3 {
+        font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.05rem;
+        color: var(--text); margin-bottom: 6px;
+    }
+    .config-card p  { font-size: 0.84rem; color: var(--text3); margin-bottom: 16px; line-height: 1.6; }
+    .config-status  {
+        display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem;
+        font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 14px;
+    }
+    .status-active   { background: #D4EDDA; color: #155724; }
+    .status-inactive { background: #F8D7DA; color: #721C24; }
+    .form-inline { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; margin-top: 12px; }
+    .form-inline input {
+        flex: 1; min-width: 220px; padding: 9px 13px; border: 1.5px solid var(--border);
+        border-radius: 9px; font-family: 'Poppins', sans-serif; font-size: 0.85rem;
+        color: var(--text); background: var(--bg); outline: none; transition: border-color 0.2s;
+    }
+    .form-inline input:focus { border-color: var(--purple); }
+    .config-toggle { display: none; }
+    .key-preview { font-family: monospace; font-size: 0.78rem; color: var(--text3); margin-top: 6px; }
+
+    /* ── STRIPE TABLE ── */
+    .table-wrap { overflow-x: auto; margin-top: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th { padding: 10px 14px; text-align: left; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.78rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    td { padding: 12px 14px; border-bottom: 1px solid #F5EDE6; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .badge { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .badge-succeeded  { background: #D4EDDA; color: #155724; }
+    .badge-processing { background: #FFF3CD; color: #856404; }
+    .badge-pending    { background: #FFF3CD; color: #856404; }
+    .badge-failed     { background: #F8D7DA; color: #721C24; }
+    .badge-canceled   { background: #E2E3E5; color: #383D41; }
+    .mode-badge-live { background: #D4EDDA; color: #155724; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+    .mode-badge-test { background: #FFF3CD; color: #856404; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+
+    .suggestion-item {
+        background: var(--card); border-radius: 12px; padding: 16px 20px;
+        margin-bottom: 10px; box-shadow: 0 2px 8px rgba(59,36,23,0.06); border-left: 4px solid var(--orange);
+    }
+    .suggestion-item h4 { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.92rem; color: var(--text); margin-bottom: 4px; }
+    .suggestion-item p  { font-size: 0.82rem; color: var(--text3); }
+</style>
+</head>
+<body>
+
+<!-- ── AUTH GATE ── -->
+<div id="auth-gate">
+    <div id="auth-box">
+        <div style="font-size:2.5rem;margin-bottom:12px">🛠️</div>
+        <h2>Site Maintenance</h2>
+        <p>Sign in with your Full Access account to continue.</p>
+        <input class="auth-input" type="text" id="sh-user" placeholder="Username" autocomplete="username">
+        <input class="auth-input" type="password" id="sh-pass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doShLogin()">
+        <button class="auth-btn" onclick="doShLogin()">Sign In</button>
+        <div id="google-signin-section">
+            <div class="or-divider">or</div>
+            <div id="google-btn-container"></div>
+        </div>
+        <div id="auth-error"></div>
+    </div>
+</div>
+
+<!-- ── MAIN PAGE ── -->
+<div id="maint-page">
+
+    <header>
+        <div class="header-left">
+            <div class="header-logo">QD <span>Admin</span></div>
+            <div class="header-title">🛠️ Site Maintenance</div>
+        </div>
+        <div class="header-right">
+            <a href="admin.html" class="btn btn-outline">← Back to Admin</a>
+        </div>
+    </header>
+
+    <!-- Inner tab bar -->
+    <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('health')">📊 Site Health</button>
+        <button class="tab-btn" onclick="switchTab('stripe')">💳 Stripe</button>
+        <button class="tab-btn" onclick="switchTab('google')">🔐 Google Sign-In</button>
+    </div>
+
+    <!-- ── HEALTH TAB ── -->
+    <div class="tab-pane active" id="pane-health">
+        <main>
+            <div id="last-run"></div>
+
+            <div class="section">
+                <div class="section-title">
+                    API Endpoints
+                    <button class="btn btn-outline btn-sm" onclick="runSiteHealth()">↻ Refresh</button>
+                </div>
+                <div class="grid-md" id="health-apis"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Data Overview</div>
+                <div class="grid-sm" id="health-data"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Alerts</div>
+                <div id="health-alerts"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Suggestions</div>
+                <div id="health-suggestions"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ── STRIPE TAB ── -->
+    <div class="tab-pane" id="pane-stripe">
+        <main>
+            <!-- Connection config -->
+            <div class="section">
+                <div class="section-title">Connection</div>
+                <div class="config-card" id="stripe-config-card">
+                    <h3>💳 Stripe API Key</h3>
+                    <p>Add your Stripe API key to view real payment data, track revenue, and sync orders into the admin panel. Use a Restricted Key with read-only access to Charges, Customers, and Payment Intents.</p>
+                    <div id="stripe-status-badge"></div>
+                    <div id="stripe-key-preview-wrap" style="display:none">
+                        <div class="key-preview" id="stripe-key-preview-sm"></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+                        <button class="btn btn-purple btn-sm" onclick="toggleStripeForm()">⚙ Update Key</button>
+                        <button class="btn btn-red btn-sm" id="stripe-disconnect-btn" style="display:none" onclick="doDisconnectStripe()">Disconnect</button>
+                    </div>
+                    <div id="stripe-form" style="display:none;margin-top:16px">
+                        <div class="form-inline">
+                            <input type="password" id="stripe-key-input" placeholder="sk_live_… or rk_live_…">
+                            <button class="btn btn-purple btn-sm" onclick="saveStripeKey()">Save</button>
+                            <button class="btn btn-outline btn-sm" onclick="toggleStripeForm()">Cancel</button>
+                        </div>
+                        <label style="font-size:0.78rem;color:var(--text3);margin-top:8px;display:flex;align-items:center;gap:6px;cursor:pointer">
+                            <input type="checkbox" id="stripe-key-show" onchange="document.getElementById('stripe-key-input').type=this.checked?'text':'password'">
+                            Show key
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments view -->
+            <div id="stripe-payments-section" style="display:none">
+                <div class="section">
+                    <div class="section-title">
+                        Payments
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <span id="stripe-mode-badge"></span>
+                            <button class="btn btn-purple btn-sm" onclick="loadStripePayments()">↻ Refresh</button>
+                        </div>
+                    </div>
+                    <div class="grid-sm" id="stripe-stats" style="margin-bottom:20px"></div>
+                    <div style="background:var(--card);border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(59,36,23,0.07)">
+                        <div id="stripe-loading-msg" style="text-align:center;padding:40px;color:var(--text3)">⏳ Loading payments…</div>
+                        <div id="stripe-error-msg" style="display:none;color:#C0392B;font-size:0.85rem;padding:16px;background:#FDEDEC;border-radius:10px"></div>
+                        <div class="table-wrap" id="stripe-table-wrap" style="display:none">
+                            <table><thead><tr><th>Date</th><th>Customer</th><th>Location</th><th>Amount</th><th>Description</th><th>Status</th><th></th></tr></thead>
+                            <tbody id="stripe-tbody"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ── GOOGLE SIGN-IN TAB ── -->
+    <div class="tab-pane" id="pane-google">
+        <main>
+            <div class="section">
+                <div class="section-title">Configuration</div>
+                <div class="config-card">
+                    <h3>🔐 Google Sign-In</h3>
+                    <p>Allow staff and members to sign in with their Google accounts. You need a Google Client ID from Google Cloud Console — create OAuth 2.0 credentials and add your site URL as an authorised JavaScript origin.</p>
+                    <div id="google-status-badge"></div>
+                    <div id="google-client-preview-wrap" style="display:none">
+                        <div class="key-preview" id="google-client-preview"></div>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+                        <button class="btn btn-purple btn-sm" onclick="toggleGoogleForm()">⚙ Update Client ID</button>
+                        <button class="btn btn-red btn-sm" id="google-disconnect-btn" style="display:none" onclick="doDisconnectGoogle()">Disconnect</button>
+                    </div>
+                    <div id="google-form" style="display:none;margin-top:16px">
+                        <div class="form-inline">
+                            <input type="text" id="google-client-input" placeholder="xxxxxxxxxxxx.apps.googleusercontent.com">
+                            <button class="btn btn-purple btn-sm" onclick="saveGoogleClientId()">Save</button>
+                            <button class="btn btn-outline btn-sm" onclick="toggleGoogleForm()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-card" style="margin-top:0">
+                    <h3>ℹ️ How it works</h3>
+                    <p>Once configured:</p>
+                    <ul style="font-size:0.84rem;color:var(--text3);line-height:2;padding-left:18px">
+                        <li>Staff can sign into the admin panel with their Google account (set their Google email in the Team tab)</li>
+                        <li>Members can sign into the members portal with their Google account (set their Google email in the Members tab)</li>
+                        <li>Full Access staff automatically get member portal access when logged in</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</div><!-- /maint-page -->
+
+<script>
+var maintUser = null;
+
+// ── AUTH ────────────────────────────────────────────────────────────────────
+async function doShLogin() {
+    var u = document.getElementById('sh-user').value.trim();
+    var p = document.getElementById('sh-pass').value;
+    var errEl = document.getElementById('auth-error');
+    errEl.style.display = 'none';
+    if (!u || !p) { errEl.textContent = 'Please enter username and password.'; errEl.style.display = 'block'; return; }
+    try {
+        var r = await fetch('/api/login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u, password: p }),
+        });
+        var data = await r.json();
+        if (!r.ok) { errEl.textContent = data.error || 'Invalid credentials.'; errEl.style.display = 'block'; return; }
+        if (data.role !== 'builder') { errEl.textContent = 'Access denied — Full Access role required.'; errEl.style.display = 'block'; return; }
+        maintUser = data;
+        sessionStorage.setItem('qd_sess', JSON.stringify(data));
+        showMaintPage();
+    } catch {
+        errEl.textContent = 'Could not connect. Please try again.';
+        errEl.style.display = 'block';
+    }
+}
+
+async function handleShGoogleCredential(response) {
+    var errEl = document.getElementById('auth-error');
+    errEl.style.display = 'none';
+    try {
+        var r = await fetch('/api/google-login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken: response.credential }),
+        });
+        var data = await r.json();
+        if (!r.ok) { errEl.textContent = data.error || 'Google sign-in failed.'; errEl.style.display = 'block'; return; }
+        var user = data.user || data;
+        if (user.role !== 'builder') { errEl.textContent = 'Access denied — Full Access role required.'; errEl.style.display = 'block'; return; }
+        maintUser = user;
+        sessionStorage.setItem('qd_sess', JSON.stringify(user));
+        showMaintPage();
+    } catch {
+        errEl.textContent = 'Google sign-in failed. Please try again.';
+        errEl.style.display = 'block';
+    }
+}
+
+function showMaintPage() {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('maint-page').style.display = 'block';
+    runSiteHealth();
+    renderStripeStatus();
+    loadGoogleStatus();
+}
+
+// ── GOOGLE GSI LOADER ────────────────────────────────────────────────────────
+async function loadGoogleSignIn() {
+    try {
+        var r = await fetch('/api/settings');
+        if (!r.ok) return;
+        var s = await r.json();
+        if (!s.googleClientId) return;
+        if (typeof google !== 'undefined' && google.accounts) { _setupShGoogleBtn(s.googleClientId); return; }
+        var script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.onload = function() { _setupShGoogleBtn(s.googleClientId); };
+        document.head.appendChild(script);
+    } catch {}
+}
+function _setupShGoogleBtn(clientId) {
+    google.accounts.id.initialize({ client_id: clientId, callback: handleShGoogleCredential, auto_select: false });
+    google.accounts.id.renderButton(document.getElementById('google-btn-container'),
+        { theme: 'outline', size: 'large', width: 300, text: 'signin_with', shape: 'rectangular' });
+    document.getElementById('google-signin-section').style.display = 'block';
+}
+
+// ── SESSION RESTORE ──────────────────────────────────────────────────────────
+(function() {
+    try {
+        var s = sessionStorage.getItem('qd_sess');
+        if (s) {
+            var stored = JSON.parse(s);
+            if (stored && stored.role === 'builder') { maintUser = stored; showMaintPage(); return; }
+        }
+    } catch {}
+    loadGoogleSignIn();
+})();
+
+// ── INNER TAB SWITCHING ───────────────────────────────────────────────────────
+function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(function(b,i) {
+        var names = ['health','stripe','google'];
+        b.classList.toggle('active', names[i] === name);
+    });
+    document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('pane-' + name).classList.add('active');
+    if (name === 'health')  runSiteHealth();
+    if (name === 'stripe')  renderStripeStatus();
+    if (name === 'google')  loadGoogleStatus();
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function fmtAmt(a, c) { var s={gbp:'£',eur:'€',usd:'$'}; return (s[(c||'').toLowerCase()]||(c||'').toUpperCase()+' ')+(a/100).toFixed(2); }
+
+function shCard(icon, label, value, bg, color) {
+    return `<div class="sh-card" style="background:${bg}">
+        <div class="sh-card-icon">${icon}</div>
+        <div class="sh-card-value" style="color:${color}">${typeof value==='number'?value:esc(String(value))}</div>
+        <div class="sh-card-label">${esc(label)}</div>
+    </div>`;
+}
+function shAlert(type, msg) {
+    var cfg = {
+        error:{ bg:'#FDEDEC', color:'#C0392B', border:'#C0392B', icon:'🔴' },
+        warn: { bg:'#FEF3E2', color:'#C4720A', border:'#E8872A', icon:'🟡' },
+        info: { bg:'#EBF5FB', color:'#2471A3', border:'#2471A3', icon:'🔵' },
+    }[type] || { bg:'#F2F3F4', color:'#5C4033', border:'#BDC3C7', icon:'⚪' };
+    return `<div class="alert-item" style="background:${cfg.bg};color:${cfg.color};border-color:${cfg.border}">${cfg.icon} ${esc(msg)}</div>`;
+}
+
+// ── SITE HEALTH ───────────────────────────────────────────────────────────────
+async function runSiteHealth() {
+    var APIS = [
+        {label:'Contacts',  url:'/api/contacts'},
+        {label:'Interests', url:'/api/interests'},
+        {label:'Orders',    url:'/api/orders'},
+        {label:'Inventory', url:'/api/inventory'},
+        {label:'Members',   url:'/api/members'},
+        {label:'Users',     url:'/api/users'},
+    ];
+    document.getElementById('health-apis').innerHTML   = APIS.map(function(a){ return shCard('⏳', a.label, 'Checking…', '#EBF5FB', '#2471A3'); }).join('');
+    document.getElementById('health-data').innerHTML   = '<p style="color:var(--text3);font-size:0.85rem">Loading…</p>';
+    document.getElementById('health-alerts').innerHTML = '<p style="color:var(--text3);font-size:0.85rem">Loading…</p>';
+
+    var results = await Promise.all(APIS.map(async function(a) {
+        var t0 = Date.now();
+        try {
+            var r = await fetch(a.url);
+            var ms = Date.now() - t0;
+            var data = r.ok ? await r.json() : null;
+            return { label:a.label, ok:r.ok, status:r.status, ms:ms, data:data };
+        } catch { return { label:a.label, ok:false, status:0, ms:Date.now()-t0, data:null }; }
+    }));
+
+    document.getElementById('health-apis').innerHTML = results.map(function(r) {
+        return shCard(r.ok?'✅':'❌', r.label, r.ok?(r.ms+'ms'):('HTTP '+(r.status||'failed')),
+            r.ok?'#EAFAF1':'#FDEDEC', r.ok?'#1E8449':'#C0392B');
+    }).join('');
+
+    function get(label) { var r = results.find(function(x){return x.label===label;}); return r&&r.ok?(r.data||[]):[];}
+    var contacts  = get('Contacts');
+    var interests = get('Interests');
+    var orders    = get('Orders');
+    var inventory = get('Inventory');
+    var members   = get('Members');
+    var users     = get('Users');
+
+    var today = new Date(); today.setHours(0,0,0,0);
+    var activeMembers = members.filter(function(m){ return m.active!==false&&(!m.expiryDate||new Date(m.expiryDate)>=today); });
+    var unreadMsgs    = contacts.filter(function(m){ return m.status==='received'||!m.status; }).length;
+    var newInterests  = interests.filter(function(i){ return i.status==='new'||!i.status; }).length;
+    var openOrders    = orders.filter(function(o){ return o.status==='processing'||o.status==='pending'; }).length;
+    var lowStock      = inventory.filter(function(i){ return (i.qty||i.quantity||0)<3; });
+    var totalRev      = orders.filter(function(o){ return o.status==='complete'||o.status==='completed'; }).reduce(function(s,o){ return s+(parseFloat(o.total||o.amount||0)||0); }, 0);
+
+    document.getElementById('health-data').innerHTML = [
+        shCard('👥','Active Members',   activeMembers.length,          '#F3E8F0','#7B3F5E'),
+        shCard('🛒','Open Orders',      openOrders,                    '#EBF5FB','#2471A3'),
+        shCard('✉️','Unread Messages',  unreadMsgs+newInterests,      '#FEF3E2','#C4720A'),
+        shCard('📦','Inventory Items',  inventory.length,              '#EAFAF1','#1E8449'),
+        shCard('👤','Staff Accounts',   users.length,                  '#F2F3F4','#5C4033'),
+        shCard('⚠️','Low Stock (<3)',   lowStock.length,               lowStock.length>0?'#FDEDEC':'#EAFAF1', lowStock.length>0?'#C0392B':'#1E8449'),
+        shCard('💰','Total Revenue',    '£'+totalRev.toFixed(2),       '#F3E8F0','#7B3F5E'),
+        shCard('📋','Total Orders',     orders.length,                 '#EBF5FB','#2471A3'),
+    ].join('');
+
+    var alerts = [];
+    var failedApis = results.filter(function(r){ return !r.ok; });
+    if (failedApis.length) alerts.push({type:'error', msg:'API failure: '+failedApis.map(function(r){return r.label;}).join(', ')+' — check server logs.'});
+
+    var slowApis = results.filter(function(r){ return r.ok&&r.ms>1500; });
+    if (slowApis.length) alerts.push({type:'warn', msg:'Slow API response: '+slowApis.map(function(r){return r.label+' ('+r.ms+'ms)';}).join(', ')});
+
+    var expiringSoon = members.filter(function(m){
+        if (!m.expiryDate||m.active===false) return false;
+        var days = Math.ceil((new Date(m.expiryDate)-today)/86400000);
+        return days>=0&&days<=7;
+    });
+    if (expiringSoon.length) alerts.push({type:'warn', msg:expiringSoon.length+' member(s) expire within 7 days: '+expiringSoon.map(function(m){return m.name;}).join(', ')});
+
+    var expiredActive = members.filter(function(m){ return m.active!==false&&m.expiryDate&&new Date(m.expiryDate)<today; });
+    if (expiredActive.length) alerts.push({type:'error', msg:expiredActive.length+' expired account(s) still marked active: '+expiredActive.map(function(m){return m.name;}).join(', ')});
+
+    var stuckOrders = orders.filter(function(o){
+        if (o.status!=='processing'&&o.status!=='pending') return false;
+        return o.date&&(today-new Date(o.date))>7*86400000;
+    });
+    if (stuckOrders.length) alerts.push({type:'warn', msg:stuckOrders.length+' order(s) have been processing for over 7 days.'});
+
+    if (lowStock.length)  alerts.push({type:'warn', msg:'Low stock: '+lowStock.map(function(i){return i.name||i.title||'item';}).join(', ')});
+    if (unreadMsgs>0)     alerts.push({type:'info', msg:unreadMsgs+' unread contact message(s) waiting.'});
+    if (newInterests>0)   alerts.push({type:'info', msg:newInterests+' new Qur\'an class interest submission(s) waiting.'});
+
+    document.getElementById('health-alerts').innerHTML = alerts.length
+        ? alerts.map(function(a){ return shAlert(a.type, a.msg); }).join('')
+        : '<div class="all-good">✅ No alerts — everything looks good!</div>';
+
+    var suggestions = [
+        { title:'Set Google emails for all staff', detail:'Staff with a Google email can sign in automatically without a separate password.', check: users.some(function(u){return !u.googleEmail;}) },
+        { title:'Add expiry dates to non-lifetime members', detail:'Some active members have no expiry date set. Check if these are intentional.', check: members.some(function(m){return m.active!==false&&!m.expiryDate&&m.plan!=='Lifetime';}) },
+        { title:'Clear out-of-stock inventory items', detail:'Items at 0 stock can confuse customers — mark them unavailable or remove them.', check: inventory.some(function(i){return (i.qty||i.quantity||0)===0;}) },
+        { title:'Resolve old messages', detail:'Mark read/replied messages as resolved to keep the inbox clean.', check: contacts.some(function(m){return m.status==='read'||m.status==='replied';}) || interests.some(function(i){return i.status==='contacted';}) },
+        { title:'Follow up on Qur\'an class interest submissions', detail:'New interest forms haven\'t been followed up yet.', check: newInterests>0 },
+    ];
+    var activeSugg = suggestions.filter(function(s){return s.check;});
+    document.getElementById('health-suggestions').innerHTML = activeSugg.length
+        ? activeSugg.map(function(s){ return '<div class="suggestion-item"><h4>💡 '+esc(s.title)+'</h4><p>'+esc(s.detail)+'</p></div>'; }).join('')
+        : '<div class="all-good">✅ No suggestions at this time.</div>';
+
+    document.getElementById('last-run').textContent = 'Last checked: ' + new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ── STRIPE ────────────────────────────────────────────────────────────────────
+function getStripeKey() { try { return atob(localStorage.getItem('qd_sk')||''); } catch { return ''; } }
+function setStripeKey(k) { localStorage.setItem('qd_sk', btoa(k)); }
+function clearStripeKey() { localStorage.removeItem('qd_sk'); }
+
+function renderStripeStatus() {
+    var key = getStripeKey();
+    var badge = document.getElementById('stripe-status-badge');
+    var previewWrap = document.getElementById('stripe-key-preview-wrap');
+    var preview = document.getElementById('stripe-key-preview-sm');
+    var disconnBtn = document.getElementById('stripe-disconnect-btn');
+
+    if (key) {
+        var isLive = key.startsWith('sk_live') || key.startsWith('rk_live');
+        badge.innerHTML = '<span class="config-status '+(isLive?'status-active':'status-active')+'">'+(isLive?'🟢 Live Mode':'🟡 Test Mode')+'</span>';
+        preview.textContent = key.slice(0,8) + '••••••••' + key.slice(-4);
+        previewWrap.style.display = 'block';
+        disconnBtn.style.display = 'inline-flex';
+        document.getElementById('stripe-payments-section').style.display = 'block';
+        loadStripePayments();
+    } else {
+        badge.innerHTML = '<span class="config-status status-inactive">⚫ Not connected</span>';
+        previewWrap.style.display = 'none';
+        disconnBtn.style.display = 'none';
+        document.getElementById('stripe-payments-section').style.display = 'none';
+    }
+}
+
+function toggleStripeForm() {
+    var f = document.getElementById('stripe-form');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveStripeKey() {
+    var key = document.getElementById('stripe-key-input').value.trim();
+    if (!key) { alert('Please enter a Stripe API key.'); return; }
+    if (!key.startsWith('sk_') && !key.startsWith('rk_')) { alert('Invalid key format. Use sk_ or rk_ prefix.'); return; }
+    setStripeKey(key);
+    document.getElementById('stripe-form').style.display = 'none';
+    document.getElementById('stripe-key-input').value = '';
+    renderStripeStatus();
+}
+
+function doDisconnectStripe() {
+    if (!confirm('Remove Stripe API key?')) return;
+    clearStripeKey();
+    renderStripeStatus();
+}
+
+async function loadStripePayments() {
+    var key = getStripeKey();
+    if (!key) return;
+    var loadMsg  = document.getElementById('stripe-loading-msg');
+    var errMsg   = document.getElementById('stripe-error-msg');
+    var tableWrap = document.getElementById('stripe-table-wrap');
+    loadMsg.style.display = 'block'; errMsg.style.display = 'none'; tableWrap.style.display = 'none';
+
+    try {
+        var r = await fetch('https://api.stripe.com/v1/payment_intents?limit=100&expand[]=data.charges', {
+            headers: { 'Authorization': 'Bearer ' + key }
+        });
+        if (!r.ok) { var ej = await r.json(); throw new Error(ej.error ? ej.error.message : 'Stripe error ' + r.status); }
+        var pd = await r.json();
+        var pays = pd.data || [];
+
+        // Stats
+        var succeeded = pays.filter(function(p){ return p.status==='succeeded'; });
+        var rev = succeeded.reduce(function(s,p){ return s+(p.amount_received||p.amount); }, 0);
+        var cur = (pays[0]&&pays[0].currency)||'gbp';
+        var isLive = key.startsWith('sk_live')||key.startsWith('rk_live');
+        document.getElementById('stripe-mode-badge').innerHTML = isLive
+            ? '<span class="mode-badge-live">🟢 Live</span>'
+            : '<span class="mode-badge-test">🟡 Test</span>';
+
+        document.getElementById('stripe-stats').innerHTML = [
+            shCard('💰','Total Revenue',fmtAmt(rev,cur),'#EAFAF1','#1E8449'),
+            shCard('✅','Succeeded',succeeded.length,'#D4EDDA','#155724'),
+            shCard('📋','All Payments',pays.length,'#EBF5FB','#2471A3'),
+        ].join('');
+
+        var stripeLinkBase = isLive ? 'https://dashboard.stripe.com/payments/' : 'https://dashboard.stripe.com/test/payments/';
+        var sm = {succeeded:'badge-succeeded',requires_payment_method:'badge-failed',processing:'badge-processing',canceled:'badge-canceled',requires_capture:'badge-processing'};
+        document.getElementById('stripe-tbody').innerHTML = pays.length ? pays.map(function(p) {
+            var ch = (p.charges&&p.charges.data&&p.charges.data[0])||null;
+            var bd = ch&&ch.billing_details||null;
+            var nm = (p.shipping&&p.shipping.name)||(bd&&bd.name)||p.receipt_email||'—';
+            var country = (p.shipping&&p.shipping.address&&p.shipping.address.country)||(bd&&bd.address&&bd.address.country)||'—';
+            var dt = new Date(p.created*1000).toLocaleDateString('en-GB');
+            var dsc = p.description||(p.metadata&&p.metadata.product)||'—';
+            var bc = sm[p.status]||'badge-pending';
+            return '<tr><td>'+dt+'</td><td>'+esc(nm)+'</td><td>'+esc(country)+'</td><td><strong>'+fmtAmt(p.amount_received||p.amount,p.currency)+'</strong></td>'
+                +'<td style="color:var(--text3);font-size:0.82rem">'+esc(dsc)+'</td>'
+                +'<td><span class="badge '+bc+'">'+cap(p.status.replace(/_/g,' '))+'</span></td>'
+                +'<td><a href="'+stripeLinkBase+p.id+'" target="_blank" class="btn btn-outline btn-sm">View ↗</a></td></tr>';
+        }).join('') : '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No payments found.</td></tr>';
+
+        loadMsg.style.display = 'none'; tableWrap.style.display = 'block';
+    } catch(err) {
+        loadMsg.style.display = 'none';
+        errMsg.textContent = '⚠️ ' + err.message;
+        errMsg.style.display = 'block';
+    }
+}
+
+// ── GOOGLE CONFIG ─────────────────────────────────────────────────────────────
+async function loadGoogleStatus() {
+    try {
+        var r = await fetch('/api/settings');
+        if (!r.ok) return;
+        var s = await r.json();
+        var clientId = s.googleClientId || '';
+        var badge = document.getElementById('google-status-badge');
+        var previewWrap = document.getElementById('google-client-preview-wrap');
+        var preview = document.getElementById('google-client-preview');
+        var disconnBtn = document.getElementById('google-disconnect-btn');
+        if (clientId) {
+            badge.innerHTML = '<span class="config-status status-active">🟢 Active</span>';
+            preview.textContent = clientId.length > 50 ? clientId.slice(0,47)+'…' : clientId;
+            previewWrap.style.display = 'block';
+            disconnBtn.style.display = 'inline-flex';
+            document.getElementById('google-client-input').value = clientId;
+        } else {
+            badge.innerHTML = '<span class="config-status status-inactive">⚫ Not configured</span>';
+            previewWrap.style.display = 'none';
+            disconnBtn.style.display = 'none';
+        }
+    } catch {}
+}
+
+function toggleGoogleForm() {
+    var f = document.getElementById('google-form');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function saveGoogleClientId() {
+    var clientId = document.getElementById('google-client-input').value.trim();
+    if (!clientId) { alert('Please enter a Google Client ID.'); return; }
+    if (!clientId.includes('.apps.googleusercontent.com')) { alert('Invalid format. Google Client IDs end with .apps.googleusercontent.com'); return; }
+    try {
+        var r = await fetch('/api/settings', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ googleClientId: clientId }),
+        });
+        if (r.ok) { document.getElementById('google-form').style.display = 'none'; loadGoogleStatus(); alert('Google Sign-In updated successfully.'); }
+        else { alert('Failed to save settings.'); }
+    } catch { alert('Failed to save settings.'); }
+}
+
+async function doDisconnectGoogle() {
+    if (!confirm('Remove Google Sign-In? Staff and members will no longer be able to sign in with Google.')) return;
+    try {
+        var r = await fetch('/api/settings', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ googleClientId: '' }),
+        });
+        if (r.ok) { loadGoogleStatus(); }
+    } catch { alert('Failed to remove settings.'); }
+}
+</script>
+</body>
+</html>
