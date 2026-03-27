@@ -294,6 +294,24 @@
             padding: 4px;
         }
 
+        .btn-maintenance {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #E8872A;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-maintenance:hover { background: #cf6f1a; }
+
         .page-content { padding: 28px; flex: 1; }
 
         /* TABS */
@@ -702,7 +720,10 @@
         <!-- MAIN -->
         <div class="main-content">
             <div class="topbar">
-                <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+                    <a href="sitemaintenance.html" class="btn-maintenance">🔧 Maintenance</a>
+                </div>
                 <h2 id="page-title">Dashboard</h2>
                 <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
             </div>
