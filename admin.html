@@ -972,7 +972,6 @@
                 <option value="">— Select —</option>
                 <option value="UK Shipping">UK Shipping</option>
                 <option value="International Shipping">International Shipping</option>
-                <option value="Collection - Bham">Collection - Bham</option>
                 <option value="Collection - Lon">Collection - Lon</option>
             </select>
         </div>
@@ -1573,7 +1572,6 @@ async function renderOrders() {
                     <option value="">— None —</option>
                     <option value="UK Shipping"${o.shippingType==='UK Shipping'?' selected':''}>UK Shipping</option>
                     <option value="International Shipping"${o.shippingType==='International Shipping'?' selected':''}>International Shipping</option>
-                    <option value="Collection - Bham"${o.shippingType==='Collection - Bham'?' selected':''}>Collection - Bham</option>
                     <option value="Collection - Lon"${o.shippingType==='Collection - Lon'?' selected':''}>Collection - Lon</option>
                    </select>`
                 : (o.shippingType || '—')
@@ -1609,7 +1607,6 @@ async function renderOrders() {
 const SHIP_COLORS = {
     'UK Shipping':              'background:#27AE60;color:#fff',
     'International Shipping':   'background:#8E44AD;color:#fff',
-    'Collection - Bham':        'background:#E67E22;color:#fff',
     'Collection - Lon':         'background:#16A085;color:#fff',
 };
 const PILL_BASE = ';appearance:none;-webkit-appearance:none;border:none;border-radius:20px;padding:3px 10px;font-size:0.73rem;font-weight:600;cursor:pointer;outline:none;max-width:160px';
