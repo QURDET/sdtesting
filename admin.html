@@ -1160,6 +1160,18 @@ function escHtml(str) {
 }
 
 // ─────────────────────────────────────────────
+// ERROR LOGGING — stores errors in localStorage for Site Maintenance to display
+// ─────────────────────────────────────────────
+function logSiteError(source, message) {
+    try {
+        var errors = JSON.parse(localStorage.getItem('qdSiteErrors') || '[]');
+        errors.unshift({ source: source, message: message, date: new Date().toISOString() });
+        if (errors.length > 50) errors = errors.slice(0, 50);
+        localStorage.setItem('qdSiteErrors', JSON.stringify(errors));
+    } catch(e) { console.error('Failed to log site error:', e); }
+}
+
+// ─────────────────────────────────────────────
 // THEME
 // ─────────────────────────────────────────────
 function toggleTheme() {
@@ -1705,7 +1717,7 @@ async function deleteOrder(id) {
         ? orders.map(o => o.id === id ? { ...o, _deleted: true } : o)
         : orders.filter(o => o.id !== id);
     const ok = await saveOrders(updated);
-    if (!ok) { alert('Failed to delete order — please try again.'); return; }
+    if (!ok) { alert('Something went wrong — please contact IT Team.'); return; }
     document.querySelectorAll(`tr[data-order-id="${id}"]`).forEach(r => r.remove());
     renderDashboard();
 }
@@ -2127,7 +2139,8 @@ async function loadAllMessages() {
         document.getElementById('resolved-messages-list').innerHTML = resolved.map(renderInboxCard).join('');
     } catch(e) {
         console.error('loadAllMessages error:', e);
-        wrap.innerHTML = '<p style="color:#C0392B;padding:20px 0">Failed to load messages: ' + e.message + '</p>';
+        logSiteError('Messages', e.message);
+        wrap.innerHTML = '<p style="color:#C0392B;padding:20px 0">Something went wrong — please contact IT Team.</p>';
     }
 }
 

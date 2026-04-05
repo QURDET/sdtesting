@@ -243,6 +243,14 @@
                 <div class="section-title">Suggestions</div>
                 <div id="health-suggestions"></div>
             </div>
+
+            <div class="section">
+                <div class="section-title">
+                    Error Log
+                    <button class="btn btn-outline btn-sm" onclick="clearErrorLog()">🗑 Clear</button>
+                </div>
+                <div id="health-errors"></div>
+            </div>
         </main>
     </div>
 
@@ -574,6 +582,32 @@ async function runSiteHealth() {
         : '<div class="all-good">✅ No suggestions at this time.</div>';
 
     document.getElementById('last-run').textContent = 'Last checked: ' + new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+    loadErrorLog();
+}
+
+// ── ERROR LOG ────────────────────────────────────────────────────────────────
+function loadErrorLog() {
+    var wrap = document.getElementById('health-errors');
+    try {
+        var errors = JSON.parse(localStorage.getItem('qdSiteErrors') || '[]');
+        if (!errors.length) {
+            wrap.innerHTML = '<div class="all-good">✅ No errors logged.</div>';
+            return;
+        }
+        wrap.innerHTML = errors.map(function(e) {
+            var d = new Date(e.date);
+            var when = d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+            return shAlert('error', '<strong>' + esc(e.source) + '</strong> — ' + esc(e.message) + ' <span style="opacity:0.6;font-size:0.8em">(' + when + ')</span>');
+        }).join('');
+    } catch(ex) {
+        wrap.innerHTML = shAlert('error', 'Could not read error log.');
+    }
+}
+
+function clearErrorLog() {
+    localStorage.removeItem('qdSiteErrors');
+    loadErrorLog();
 }
 
 // ── STRIPE ────────────────────────────────────────────────────────────────────
