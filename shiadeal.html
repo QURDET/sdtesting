@@ -69,7 +69,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 1rem 5%;
+            padding: 0.8rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -81,46 +81,47 @@
 
         /* Logo in the navbar - hidden at first, slides in when you scroll down */
         .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 3px;
             opacity: 0;
-            transform: translateY(-20px);
             transition: all 0.4s ease;
         }
 
         /* When the page is scrolled, the logo becomes visible */
         nav.scrolled .logo {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
         }
 
         .logo img {
-            height: 40px;
+            height: 50px;
             border-radius: 8px;
         }
 
         .logo-text {
             font-family: 'Bely Display', serif;
-            font-size: 0.85rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #ffffff;
             line-height: 1;
         }
 
-        /* Review Us button - gold outline */
+        /* Review Us button - gold outline, left side */
         .review-btn {
             border: 2px solid var(--gold);
             color: #fff;
             background: transparent;
-            padding: 6px 16px;
+            padding: 8px 20px;
             border-radius: 25px;
             font-family: 'Poppins', sans-serif;
             font-size: 0.85rem;
             font-weight: 600;
             text-decoration: none;
-            transition: all 0.3s ease;
             white-space: nowrap;
             opacity: 0;
             transform: translateY(-20px);
@@ -1342,11 +1343,11 @@
 <body>
     <!-- ========== NAVIGATION BAR - Fixed at top, contains logo + hamburger menu + links ========== -->
     <nav>
+        <a href="https://uk.trustpilot.com/review/qurandetectives.co.uk" target="_blank" rel="noopener" class="review-btn">Review Us ⭐</a>
         <div class="logo">
             <img src="SDlogo.jpeg" alt="Shia Deal Logo">
             <span class="logo-text">Shia Deal</span>
         </div>
-        <a href="https://uk.trustpilot.com/review/qurandetectives.co.uk" target="_blank" rel="noopener" class="review-btn">Review Us ⭐</a>
         <ul class="nav-links" id="navLinks">
             <li><a href="index.html">Home</a></li>
             <li><a href="#about">About</a></li>
