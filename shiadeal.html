@@ -747,6 +747,48 @@
             transform: none;
         }
 
+        .sumup-checkout {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .sumup-country-label {
+            font-size: 0.95rem;
+            color: #555;
+            font-weight: 600;
+        }
+        .sumup-country-select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 2px solid #eeeeee;
+            background: #ffffff;
+            font-size: 1rem;
+            font-family: inherit;
+            color: #222;
+            cursor: pointer;
+        }
+        .sumup-country-select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .sumup-total-row {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #333;
+            padding: 0.25rem 0;
+        }
+        .sumup-total-row span {
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        #express-checkout-container {
+            min-height: 0;
+        }
+        #express-checkout-container:not(:empty) {
+            margin-bottom: 0.25rem;
+        }
+
         .secure-badge {
             display: flex;
             align-items: center;
@@ -1267,6 +1309,11 @@
         [data-theme="dark"] .promo-banner .code { background: #c47f0a; }
         [data-theme="dark"] .promo-preorder { background: linear-gradient(90deg, #c47f0a, #c98a10); }
         [data-theme="dark"] .country-btn:hover { border-color: #c47f0a; }
+        [data-theme="dark"] .sumup-country-label { color: #d8c8b0; }
+        [data-theme="dark"] .sumup-country-select { background: #2e2e2e; border-color: #3e3e3e; color: #e8d9c5; }
+        [data-theme="dark"] .sumup-country-select:focus { border-color: #c47f0a; }
+        [data-theme="dark"] .sumup-total-row { color: #e8d9c5; }
+        [data-theme="dark"] .sumup-total-row span { color: #c47f0a; }
 
         /* ── Qur'an Classes interest popup (Shia Deal theme) ── */
         .qc-popup-overlay {
@@ -1485,8 +1532,20 @@
                     <li>2-6 players</li>
                     <li>Free collection from Birmingham and Stanmore</li>
                 </ul>
-                <!-- Pre-order button: links to the SumUp store product page -->
-                <a class="checkout-btn" href="https://quran-detectives.sumupstore.com/product/shia-deal" target="_blank" rel="noopener noreferrer">Buy Now</a>
+                <!-- SumUp checkout block: country selector → live total → wallet buttons (if available) → Pay by card -->
+                <div class="sumup-checkout">
+                    <label class="sumup-country-label" for="sumup-country">Shipping to:</label>
+                    <select id="sumup-country" class="sumup-country-select" onchange="onSumupCountryChange()">
+                        <option value="uk">United Kingdom</option>
+                        <option value="us">United States</option>
+                        <option value="au">Australia</option>
+                        <option value="ca">Canada</option>
+                    </select>
+                    <div class="sumup-total-row">Order total: <span id="sumup-total-display">£28.00</span></div>
+                    <!-- Apple Pay / Google Pay buttons mount here when supported by the device -->
+                    <div id="express-checkout-container"></div>
+                    <button class="checkout-btn" id="sumup-pay-card-btn" onclick="sumupPayByCard()">Pay by card</button>
+                </div>
                 <div class="secure-badge">
                     <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
                     Secure checkout
@@ -1864,6 +1923,142 @@
             closeCountryModal();
             window.open(countryLinks[countryCode], '_blank');
         }
+
+        /* ============================================
+           SUMUP PAYMENT INTEGRATION
+           Loads /api/sumup-config (public key + shipping
+           rates), wires up the country selector and total
+           display, mounts the Swift Checkout SDK for
+           Apple Pay / Google Pay if the device supports
+           them, and provides a Pay-by-card fallback that
+           creates a checkout server-side and redirects
+           to SumUp's hosted checkout page.
+           ============================================ */
+        let sumupConfig = null;
+        let swiftCheckoutClient = null;
+        let sumupRebuildButtons = null;
+
+        async function loadSumupConfig() {
+            try {
+                const res = await fetch('/api/sumup-config');
+                if (!res.ok) return;
+                sumupConfig = await res.json();
+                recalcSumupTotal();
+                if (sumupConfig.publicKey) initSumupSwiftCheckout();
+            } catch (e) {
+                console.error('SumUp config load failed', e);
+            }
+        }
+
+        function recalcSumupTotal() {
+            if (!sumupConfig) return;
+            const country = document.getElementById('sumup-country').value;
+            const shipping = sumupConfig.shippingRates[country] || 0;
+            const total = (sumupConfig.productPrice + shipping).toFixed(2);
+            document.getElementById('sumup-total-display').textContent = '£' + total;
+        }
+
+        function onSumupCountryChange() {
+            recalcSumupTotal();
+            // Rebuild Swift Checkout buttons because the amount changed
+            if (sumupRebuildButtons) sumupRebuildButtons();
+        }
+
+        async function sumupPayByCard() {
+            const btn = document.getElementById('sumup-pay-card-btn');
+            const original = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+            try {
+                const country = document.getElementById('sumup-country').value;
+                const res = await fetch('/api/sumup/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ countryCode: country, quantity: 1 }),
+                });
+                if (!res.ok) throw new Error('checkout creation failed');
+                const data = await res.json();
+                if (!data.hostedCheckoutUrl) throw new Error('no hosted checkout url');
+                window.location.href = data.hostedCheckoutUrl;
+            } catch (e) {
+                console.error('Pay by card failed', e);
+                alert('Sorry, there was a problem starting checkout. Please try again.');
+                btn.disabled = false;
+                btn.textContent = original;
+            }
+        }
+
+        function initSumupSwiftCheckout() {
+            const script = document.createElement('script');
+            script.src = 'https://js.sumup.com/swift-checkout/v1/sdk.js';
+            script.onload = mountSumupSwiftCheckout;
+            script.onerror = function() { console.warn('SumUp Swift SDK failed to load'); };
+            document.head.appendChild(script);
+        }
+
+        function mountSumupSwiftCheckout() {
+            try {
+                if (!window.SumUp || !window.SumUp.SwiftCheckout) return;
+                swiftCheckoutClient = new window.SumUp.SwiftCheckout(sumupConfig.publicKey);
+
+                sumupRebuildButtons = function() {
+                    const country = document.getElementById('sumup-country').value;
+                    const shipping = sumupConfig.shippingRates[country] || 0;
+                    const total = (sumupConfig.productPrice + shipping).toFixed(2);
+
+                    const paymentRequest = swiftCheckoutClient.paymentRequest({
+                        total: {
+                            label: 'Shia Deal Card Game',
+                            amount: { value: total },
+                        },
+                    });
+
+                    const buttons = swiftCheckoutClient.elements();
+                    buttons.onSubmit(function(paymentMethodEvent) {
+                        fetch('/api/sumup/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ countryCode: country, quantity: 1 }),
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(d) {
+                            return swiftCheckoutClient.processCheckout(d.checkoutId, paymentMethodEvent);
+                        })
+                        .then(function(result) {
+                            if (result && result.status === 'PAID') {
+                                window.location.href = '/thankyou.html?checkout_id=' + (result.id || '');
+                            } else {
+                                console.error('Wallet payment did not complete', result);
+                            }
+                        })
+                        .catch(function(err) {
+                            const Errs = window.SumUp && window.SumUp.SwiftCheckout && window.SumUp.SwiftCheckout.Errors;
+                            if (Errs && err instanceof Errs.PaymentRequestCancelledError) {
+                                // user cancelled — silent
+                            } else {
+                                console.error('Wallet payment error', err);
+                            }
+                        });
+                    });
+
+                    paymentRequest.canMakePayment().then(function(available) {
+                        const container = document.querySelector('#express-checkout-container');
+                        if (!container) return;
+                        container.innerHTML = '';
+                        if (!available) return;
+                        paymentRequest.availablePaymentMethods().then(function(methods) {
+                            buttons.mount({ paymentMethods: methods, container: container });
+                        });
+                    });
+                };
+
+                sumupRebuildButtons();
+            } catch (e) {
+                console.error('SumUp Swift Checkout init failed', e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSumupConfig);
 
         /* ============================================
            FAQ TOGGLE

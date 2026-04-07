@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){var s=localStorage.getItem('qdTheme');if(s==='dark'||(s===null&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}());</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You — Shia Deal</title>
+    <link rel="icon" type="image/jpeg" href="qdlogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAF6F1;
+            --card: #ffffff;
+            --gold: #C9A84C;
+            --gold2: #E8BB5C;
+            --text: #3B2417;
+            --text2: #5C4033;
+            --text3: #9B7B6E;
+            --border: #E8D5C4;
+            --good: #2E7D5B;
+            --bad: #C0392B;
+        }
+        [data-theme="dark"] {
+            --bg: #1A1210;
+            --card: #241815;
+            --text: #F0E6DC;
+            --text2: #C9B5A8;
+            --text3: #8A7068;
+            --border: #3D2E28;
+            --gold: #c47f0a;
+            --gold2: #c98a10;
+            --good: #6FCF97;
+            --bad: #EB5757;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 40px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(59, 36, 23, 0.08);
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 18px;
+        }
+        .icon {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        p.lead {
+            color: var(--text2);
+            font-size: 1rem;
+            line-height: 1.55;
+            margin-bottom: 24px;
+        }
+        .details {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            text-align: left;
+            margin-bottom: 24px;
+            font-size: 0.92rem;
+            color: var(--text2);
+        }
+        .details div { padding: 4px 0; }
+        .details strong { color: var(--text); font-weight: 600; }
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
+            color: #ffffff;
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text2);
+            border: 1.5px solid var(--border);
+        }
+        .status-paid h1 { color: var(--good); }
+        .status-failed h1 { color: var(--bad); }
+        .spinner {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="card" id="card">
+        <img src="qdlogo.jpg" alt="Qur'an Detectives" class="logo">
+        <div class="spinner"></div>
+        <h1 id="title">Checking your payment...</h1>
+        <p class="lead" id="message">Please wait while we confirm your order with the payment provider.</p>
+    </div>
+
+    <script>
+        function getCheckoutId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('checkout_id');
+        }
+
+        function formatAmount(amount, currency) {
+            const symbol = currency === 'GBP' ? '£' : (currency === 'USD' ? '$' : '');
+            return symbol + Number(amount).toFixed(2) + (symbol ? '' : ' ' + currency);
+        }
+
+        function renderPaid(data) {
+            document.getElementById('card').classList.add('status-paid');
+            document.getElementById('card').innerHTML =
+                '<img src="qdlogo.jpg" alt="Qur\'an Detectives" class="logo">' +
+                '<div class="icon">✓</div>' +
+                '<h1>Thank you!</h1>' +
+                '<p class="lead">Your Shia Deal order is confirmed. We will be in touch by email about delivery or collection.</p>' +
+                '<div class="details">' +
+                    '<div><strong>Amount paid:</strong> ' + formatAmount(data.amount, data.currency) + '</div>' +
+                    '<div><strong>Order reference:</strong> ' + (data.reference || '—') + '</div>' +
+                '</div>' +
+                '<div class="btn-row">' +
+                    '<a href="/index.html" class="btn btn-primary">Back to home</a>' +
+                    '<a href="/playshiadeal.html" class="btn btn-secondary">How to play</a>' +
+                '</div>';
+        }
+
+        function renderPending() {
+            document.getElementById('title').textContent = 'Still processing...';
+            document.getElementById('message').textContent = 'Your payment is being processed. This page will refresh automatically.';
+            setTimeout(checkStatus, 5000);
+        }
+
+        function renderFailed(status) {
+            document.getElementById('card').classList.add('status-failed');
+            document.getElementById('card').innerHTML =
+                '<img src="qdlogo.jpg" alt="Qur\'an Detectives" class="logo">' +
+                '<div class="icon">⚠</div>' +
+                '<h1>Payment ' + (status === 'EXPIRED' ? 'expired' : 'didn\'t complete') + '</h1>' +
+                '<p class="lead">No charge has been made. You can try again from the Shia Deal page.</p>' +
+                '<div class="btn-row">' +
+                    '<a href="/shiadeal.html#preorder" class="btn btn-primary">Try again</a>' +
+                    '<a href="/contactus.html" class="btn btn-secondary">Contact us</a>' +
+                '</div>';
+        }
+
+        function renderError(message) {
+            document.getElementById('card').classList.add('status-failed');
+            document.getElementById('card').innerHTML =
+                '<img src="qdlogo.jpg" alt="Qur\'an Detectives" class="logo">' +
+                '<div class="icon">⚠</div>' +
+                '<h1>Something went wrong</h1>' +
+                '<p class="lead">' + message + '</p>' +
+                '<div class="btn-row">' +
+                    '<a href="/shiadeal.html" class="btn btn-primary">Back to Shia Deal</a>' +
+                    '<a href="/contactus.html" class="btn btn-secondary">Contact us</a>' +
+                '</div>';
+        }
+
+        async function checkStatus() {
+            const id = getCheckoutId();
+            if (!id) {
+                renderError('No checkout reference was provided.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/sumup/checkout/' + encodeURIComponent(id));
+                if (!res.ok) {
+                    renderError('We could not verify your payment. Please contact us with your reference number.');
+                    return;
+                }
+                const data = await res.json();
+                if (data.status === 'PAID') {
+                    renderPaid(data);
+                } else if (data.status === 'PENDING') {
+                    renderPending();
+                } else {
+                    renderFailed(data.status);
+                }
+            } catch (e) {
+                renderError('We could not reach our server. Please refresh the page in a moment.');
+            }
+        }
+
+        checkStatus();
+    </script>
+</body>
+</html>

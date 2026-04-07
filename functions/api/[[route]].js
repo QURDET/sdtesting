@@ -25,6 +25,10 @@ const CORS = {
     'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+// SumUp checkout config — single source of truth, returned to the frontend by /api/sumup-config
+const SHIA_DEAL_PRICE = 25.00; // GBP per pack, matches the price displayed on shiadeal.html
+const SHIPPING_RATES = { uk: 3.00, us: 8.00, au: 8.00, ca: 8.00 }; // GBP, confirmed by user
+
 function json(data, status = 200) {
     return new Response(JSON.stringify(data), {
         status,
@@ -326,6 +330,123 @@ export async function onRequest(context) {
         if (route === 'reset' && method === 'POST') {
             await writeData(DEFAULT_DATA);
             return json({ ok: true });
+        }
+
+        // ========================================================================
+        // SUMUP PAYMENT ROUTES
+        // ========================================================================
+
+        // GET /api/sumup-config — public config the frontend needs to render the checkout
+        if (route === 'sumup-config' && method === 'GET') {
+            return json({
+                publicKey: env.SUMUP_PUBLIC_KEY || '',
+                currency: 'GBP',
+                productPrice: SHIA_DEAL_PRICE,
+                shippingRates: SHIPPING_RATES,
+            });
+        }
+
+        // POST /api/sumup/checkout — create a SumUp checkout, return id + hosted URL
+        if (route === 'sumup/checkout' && method === 'POST') {
+            if (!env.SUMUP_API_KEY || !env.SUMUP_MERCHANT_CODE) {
+                return json({ error: 'SumUp not configured on server' }, 500);
+            }
+            const body = await request.json();
+            const country = String(body.countryCode || '').toLowerCase();
+            const quantity = Math.max(1, Math.min(10, parseInt(body.quantity, 10) || 1));
+            if (!(country in SHIPPING_RATES)) return json({ error: 'Invalid country' }, 400);
+
+            const subtotal = SHIA_DEAL_PRICE * quantity;
+            const shipping = SHIPPING_RATES[country];
+            const total = Math.round((subtotal + shipping) * 100) / 100;
+            const reference = 'SD-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+            const origin = new URL(request.url).origin;
+
+            const sumupRes = await fetch('https://api.sumup.com/v0.1/checkouts', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + env.SUMUP_API_KEY,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    checkout_reference: reference,
+                    amount: total,
+                    currency: 'GBP',
+                    merchant_code: env.SUMUP_MERCHANT_CODE,
+                    description: 'Shia Deal Card Game x' + quantity + ' (' + country.toUpperCase() + ')',
+                    return_url: origin + '/api/sumup/webhook',
+                    redirect_url: origin + '/thankyou.html?checkout_id={id}',
+                    hosted_checkout: { enabled: true },
+                }),
+            });
+            if (!sumupRes.ok) {
+                const errBody = await sumupRes.text();
+                return json({ error: 'SumUp checkout creation failed', detail: errBody }, 502);
+            }
+            const checkout = await sumupRes.json();
+            return json({
+                checkoutId: checkout.id,
+                hostedCheckoutUrl: checkout.hosted_checkout_url || ('https://api.sumup.com/v0.1/checkouts/' + checkout.id + '/pay'),
+                amount: total,
+                currency: 'GBP',
+                reference,
+            });
+        }
+
+        // POST /api/sumup/webhook — SumUp posts CHECKOUT_STATUS_CHANGED here
+        if (route === 'sumup/webhook' && method === 'POST') {
+            try {
+                const payload = await request.json();
+                const checkoutId = payload && payload.id;
+                if (checkoutId && env.SUMUP_API_KEY) {
+                    const verifyRes = await fetch('https://api.sumup.com/v0.1/checkouts/' + checkoutId, {
+                        headers: { 'Authorization': 'Bearer ' + env.SUMUP_API_KEY },
+                    });
+                    if (verifyRes.ok) {
+                        const checkout = await verifyRes.json();
+                        if (checkout.status === 'PAID') {
+                            const d = await readData();
+                            if (!d.orders) d.orders = [];
+                            if (!d.orders.find(o => o.checkoutId === checkoutId)) {
+                                d.orders.unshift({
+                                    id: 'o' + Date.now(),
+                                    checkoutId,
+                                    reference: checkout.checkout_reference,
+                                    amount: checkout.amount,
+                                    currency: checkout.currency,
+                                    description: checkout.description || '',
+                                    status: 'PAID',
+                                    date: new Date().toISOString(),
+                                    transactions: checkout.transactions || [],
+                                });
+                                await writeData(d);
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                // Swallow — always 200 OK so SumUp doesn't keep retrying
+            }
+            return json({ ok: true });
+        }
+
+        // GET /api/sumup/checkout/:id — used by thankyou.html to verify a checkout
+        if (route.startsWith('sumup/checkout/') && method === 'GET') {
+            const id = route.slice('sumup/checkout/'.length);
+            if (!id) return json({ error: 'Missing id' }, 400);
+            if (!env.SUMUP_API_KEY) return json({ error: 'SumUp not configured on server' }, 500);
+            const sumupRes = await fetch('https://api.sumup.com/v0.1/checkouts/' + encodeURIComponent(id), {
+                headers: { 'Authorization': 'Bearer ' + env.SUMUP_API_KEY },
+            });
+            if (!sumupRes.ok) return json({ error: 'Not found' }, 404);
+            const checkout = await sumupRes.json();
+            return json({
+                status: checkout.status,
+                amount: checkout.amount,
+                currency: checkout.currency,
+                reference: checkout.checkout_reference,
+                description: checkout.description || '',
+            });
         }
 
         return json({ error: 'Not found' }, 404);
