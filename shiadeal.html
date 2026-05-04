@@ -1485,8 +1485,8 @@
                     <li>2-6 players</li>
                     <li>Free collection from Birmingham and Stanmore</li>
                 </ul>
-                <!-- Pre-order button: links to the SumUp store product page -->
-                <a class="checkout-btn" href="https://quran-detectives.sumupstore.com/product/shia-deal" target="_blank" rel="noopener noreferrer">Buy Now</a>
+                <!-- Pre-order button: opens country selector -->
+                <button class="checkout-btn" onclick="openCountryModal()">Buy Now</button>
                 <div class="secure-badge">
                     <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
                     Secure checkout
@@ -1582,24 +1582,16 @@
     <div class="country-modal-overlay" id="countryModalOverlay" onclick="closeCountryModal()">
         <div class="country-modal" onclick="event.stopPropagation()">
             <button class="country-modal-close" onclick="closeCountryModal()">&#10005;</button>
-            <h3>Select Your Country</h3>
+            <h3>Select Your Region</h3>
             <p>Choose where you're ordering from</p>
             <div class="country-options">
-                <button class="country-btn" onclick="goToCheckout('uk')">
-                    <span class="country-flag">🇬🇧</span>
-                    <span class="country-label">United Kingdom</span>
-                </button>
-                <button class="country-btn" onclick="goToCheckout('us')">
-                    <span class="country-flag">🇺🇸</span>
-                    <span class="country-label">United States</span>
+                <button class="country-btn" onclick="goToCheckout('ukusau')">
+                    <span class="country-flag">🇬🇧 🇺🇸 🇦🇺</span>
+                    <span class="country-label">UK, US, Australia</span>
                 </button>
                 <button class="country-btn" onclick="goToCheckout('ca')">
                     <span class="country-flag">🇨🇦</span>
                     <span class="country-label">Canada</span>
-                </button>
-                <button class="country-btn" onclick="goToCheckout('au')">
-                    <span class="country-flag">🇦🇺</span>
-                    <span class="country-label">Australia</span>
                 </button>
             </div>
             <p style="margin-top: 1.2rem; font-size: 0.85rem; color: #888; text-align: center;">
@@ -1847,10 +1839,8 @@
            per-country links when they are ready.
            ============================================ */
         const countryLinks = {
-            uk: 'https://buy.stripe.com/14AaEX88N1vG5dKchp3AY01',
-            us: 'https://buy.stripe.com/aFa5kDexb5LW9u0dlt3AY04',
-            au: 'https://buy.stripe.com/14A9AT9cR0rCcGc4OX3AY05',
-            ca: 'https://buy.stripe.com/fZu8wP4WB0rC49G3KT3AY06',
+            ukusau: 'https://quran-detectives.sumupstore.com/product/shia-deal',
+            ca: '#', // TODO: replace with the Canada link when ready
         };
 
         /* Open the country selector modal */
