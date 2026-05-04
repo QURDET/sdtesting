@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){var s=localStorage.getItem('qdTheme');if(s==='dark'||(s===null&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}());</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 404 — Page Not Found</title>
+    <link rel="icon" type="image/jpeg" href="/qdlogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAF6F1;
+            --card: #ffffff;
+            --gold: #C9A84C;
+            --gold2: #E8BB5C;
+            --text: #3B2417;
+            --text2: #5C4033;
+            --text3: #9B7B6E;
+            --border: #E8D5C4;
+        }
+        [data-theme="dark"] {
+            --bg: #1A1210;
+            --card: #241815;
+            --text: #F0E6DC;
+            --text2: #C9B5A8;
+            --text3: #8A7068;
+            --border: #3D2E28;
+            --gold: #c47f0a;
+            --gold2: #c98a10;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 40px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(59, 36, 23, 0.08);
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 18px;
+        }
+        .error-code {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 5rem;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        h1 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        p.lead {
+            color: var(--text2);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--gold), var(--gold2));
+            color: #ffffff;
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text2);
+            border: 1.5px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="/qdlogo.jpg" alt="Qur'an Detectives" class="logo">
+        <div class="error-code">404</div>
+        <h1>Page Not Found</h1>
+        <p class="lead">Sorry, the page you're looking for doesn't exist or has been moved.</p>
+        <div class="btn-row">
+            <a href="/index.html" class="btn btn-primary">Back to home</a>
+            <a href="/shiadeal.html" class="btn btn-secondary">Shia Deal</a>
+        </div>
+    </div>
+</body>
+</html>
