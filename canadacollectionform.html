@@ -2,77 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>(function(){var s=localStorage.getItem('qdTheme');if(s==='dark'||(s===null&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}());</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Canada Collection — Shia Deal</title>
     <link rel="icon" type="image/jpeg" href="qdlogo.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #FAF6F1;
+            --card: #ffffff;
+            --gold: #C9A84C;
+            --text: #3B2417;
+            --border: #E8D5C4;
+        }
+        [data-theme="dark"] {
+            --bg: #1A1210;
+            --card: #241815;
+            --text: #F0E6DC;
+            --border: #3D2E28;
+            --gold: #c47f0a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
-            margin: 0;
-            padding: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
+            height: 100dvh; /* mobile-aware viewport */
             overflow: hidden;
-            background: #000;
+            background: var(--bg);
+            color: var(--text);
         }
         body {
-            position: fixed;
-            inset: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
         }
-        #typeform-host {
-            position: absolute;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh; /* dynamic viewport for mobile browsers with collapsing chrome */
+        .header {
+            flex: 0 0 auto;
+            width: 100%;
+            padding: 10px 5%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card);
+            border-bottom: 1.5px solid var(--border);
         }
-        #typeform-host > div[data-tf-live] {
+        .header img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .header span {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--text);
+        }
+        .header a {
+            margin-left: auto;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .header a:hover { text-decoration: underline; }
+        .form-container {
+            flex: 1 1 auto;
+            width: 100%;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .form-container > div[data-tf-live] {
             width: 100% !important;
             height: 100% !important;
+            position: absolute;
+            inset: 0;
         }
-        #typeform-host iframe {
+        .form-container iframe {
             width: 100% !important;
             height: 100% !important;
             border: none !important;
             display: block;
         }
-        .back-fab {
-            position: fixed;
-            top: 14px;
-            left: 14px;
-            z-index: 10;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: rgba(255, 255, 255, 0.92);
-            color: #3B2417;
-            font-family: 'Poppins', sans-serif, system-ui;
-            font-size: 0.82rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 999px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-            backdrop-filter: blur(8px);
-            transition: transform 0.15s ease, background 0.15s ease;
-        }
-        .back-fab:hover {
-            transform: translateY(-1px);
-            background: rgba(255, 255, 255, 1);
-        }
-        @media (prefers-color-scheme: dark) {
-            .back-fab {
-                background: rgba(36, 24, 21, 0.92);
-                color: #F0E6DC;
-            }
-            .back-fab:hover {
-                background: rgba(36, 24, 21, 1);
-            }
-        }
     </style>
 </head>
 <body>
-    <a href="shiadeal.html" class="back-fab" aria-label="Back to Shia Deal">← Back</a>
-    <div id="typeform-host">
+    <div class="header">
+        <img src="qdlogo.jpg" alt="Qur'an Detectives">
+        <span>Shia Deal — Canada</span>
+        <a href="shiadeal.html">← Back to Shia Deal</a>
+    </div>
+    <div class="form-container">
         <div data-tf-live="01KQS6W9DBDRPZNCE16QT50DMY"></div>
     </div>
     <script src="//embed.typeform.com/next/embed.js"></script>
