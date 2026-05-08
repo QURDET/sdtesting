@@ -69,7 +69,7 @@
             font-weight: 600;
         }
         .header a:hover { text-decoration: underline; }
-        #form-host {
+        #form-iframe {
             position: fixed;
             top: var(--header-h);
             left: 0;
@@ -78,21 +78,9 @@
             width: 100vw;
             height: calc(100vh - var(--header-h));
             height: calc(100dvh - var(--header-h));
-            overflow: hidden;
-        }
-        #form-host > div[data-tf-live],
-        #form-host > div[data-tf-widget] {
-            width: 100% !important;
-            height: 100% !important;
-            min-height: 100% !important;
+            border: 0;
             display: block;
-        }
-        #form-host iframe {
-            width: 100% !important;
-            height: 100% !important;
-            min-height: 100% !important;
-            border: 0 !important;
-            display: block !important;
+            background: var(--bg);
         }
     </style>
 </head>
@@ -102,38 +90,13 @@
         <span>Shia Deal — Canada</span>
         <a href="shiadeal.html">← Back to Shia Deal</a>
     </div>
-    <div id="form-host">
-        <div data-tf-widget="01KQS6W9DBDRPZNCE16QT50DMY" data-tf-medium="snippet" data-tf-iframe-props="title=Canada Shia Deal Purchase Form"></div>
-    </div>
-    <script src="//embed.typeform.com/next/embed.js"></script>
-    <script>
-        // Belt-and-braces: force the Typeform iframe to fill the host whenever it changes
-        (function() {
-            var host = document.getElementById('form-host');
-            function fillIframe() {
-                var iframes = host.querySelectorAll('iframe');
-                iframes.forEach(function(f) {
-                    f.style.setProperty('width', '100%', 'important');
-                    f.style.setProperty('height', '100%', 'important');
-                    f.style.setProperty('min-height', '100%', 'important');
-                    f.style.setProperty('border', '0', 'important');
-                });
-                var wrapper = host.querySelector('div[data-tf-widget], div[data-tf-live]');
-                if (wrapper) {
-                    wrapper.style.setProperty('width', '100%', 'important');
-                    wrapper.style.setProperty('height', '100%', 'important');
-                }
-            }
-            new MutationObserver(fillIframe).observe(host, { childList: true, subtree: true, attributes: true });
-            window.addEventListener('resize', fillIframe);
-            window.addEventListener('load', fillIframe);
-            // also poll briefly in case the embed is slow
-            var tries = 0;
-            var iv = setInterval(function() {
-                fillIframe();
-                if (++tries > 30) clearInterval(iv);
-            }, 200);
-        })();
-    </script>
+    <iframe
+        id="form-iframe"
+        src="https://form.typeform.com/to/01KQS6W9DBDRPZNCE16QT50DMY"
+        title="Canada Shia Deal Purchase Form"
+        allow="camera; microphone; autoplay; encrypted-media;"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
 </body>
 </html>
