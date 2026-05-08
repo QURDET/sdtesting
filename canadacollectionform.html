@@ -80,7 +80,8 @@
             height: calc(100dvh - var(--header-h));
             overflow: hidden;
         }
-        #form-host > div[data-tf-live] {
+        #form-host > div[data-tf-live],
+        #form-host > div[data-tf-widget] {
             width: 100% !important;
             height: 100% !important;
             min-height: 100% !important;
@@ -102,7 +103,7 @@
         <a href="shiadeal.html">← Back to Shia Deal</a>
     </div>
     <div id="form-host">
-        <div data-tf-live="01KQS6W9DBDRPZNCE16QT50DMY"></div>
+        <div data-tf-widget="01KQS6W9DBDRPZNCE16QT50DMY" data-tf-medium="snippet" data-tf-iframe-props="title=Canada Shia Deal Purchase Form"></div>
     </div>
     <script src="//embed.typeform.com/next/embed.js"></script>
     <script>
@@ -117,7 +118,7 @@
                     f.style.setProperty('min-height', '100%', 'important');
                     f.style.setProperty('border', '0', 'important');
                 });
-                var wrapper = host.querySelector('div[data-tf-live]');
+                var wrapper = host.querySelector('div[data-tf-widget], div[data-tf-live]');
                 if (wrapper) {
                     wrapper.style.setProperty('width', '100%', 'important');
                     wrapper.style.setProperty('height', '100%', 'important');
