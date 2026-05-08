@@ -69,7 +69,7 @@
             font-weight: 600;
         }
         .header a:hover { text-decoration: underline; }
-        #form-iframe {
+        #form-host {
             position: fixed;
             top: var(--header-h);
             left: 0;
@@ -78,9 +78,23 @@
             width: 100vw;
             height: calc(100vh - var(--header-h));
             height: calc(100dvh - var(--header-h));
-            border: 0;
-            display: block;
-            background: var(--bg);
+            overflow: hidden;
+        }
+        /* Force every descendant of the host to fill 100% — covers any wrapper div Typeform inserts */
+        #form-host,
+        #form-host *,
+        #form-host > *,
+        #form-host > * > *,
+        #form-host > * > * > *,
+        #form-host iframe,
+        #form-host div[data-tf-live] {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 100% !important;
+        }
+        #form-host iframe {
+            border: 0 !important;
+            display: block !important;
         }
     </style>
 </head>
@@ -90,13 +104,39 @@
         <span>Shia Deal — Canada</span>
         <a href="shiadeal.html">← Back to Shia Deal</a>
     </div>
-    <iframe
-        id="form-iframe"
-        src="https://form.typeform.com/to/01KQS6W9DBDRPZNCE16QT50DMY"
-        title="Canada Shia Deal Purchase Form"
-        allow="camera; microphone; autoplay; encrypted-media;"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin">
-    </iframe>
+    <div id="form-host">
+        <div data-tf-live="01KQS6W9DBDRPZNCE16QT50DMY"></div>
+    </div>
+    <script src="//embed.typeform.com/next/embed.js"></script>
+    <script>
+        // Aggressively force every descendant of the host to fill 100% width/height
+        (function() {
+            var host = document.getElementById('form-host');
+            function fill() {
+                var all = host.querySelectorAll('*');
+                all.forEach(function(el) {
+                    el.style.setProperty('width', '100%', 'important');
+                    el.style.setProperty('height', '100%', 'important');
+                    el.style.setProperty('min-height', '100%', 'important');
+                    el.style.setProperty('max-height', 'none', 'important');
+                    if (el.tagName === 'IFRAME') {
+                        el.style.setProperty('border', '0', 'important');
+                        el.style.setProperty('display', 'block', 'important');
+                        el.removeAttribute('height');
+                        el.removeAttribute('width');
+                    }
+                });
+            }
+            new MutationObserver(fill).observe(host, { childList: true, subtree: true, attributes: true });
+            window.addEventListener('resize', fill);
+            window.addEventListener('load', fill);
+            // poll for the first ~10 seconds while Typeform's script settles
+            var tries = 0;
+            var iv = setInterval(function() {
+                fill();
+                if (++tries > 50) clearInterval(iv);
+            }, 200);
+        })();
+    </script>
 </body>
 </html>
