@@ -1420,6 +1420,53 @@
         [data-theme="dark"] .qc-popup-box p  { color: #C8A882; }
         [data-theme="dark"] .qc-popup-no { border-color: rgba(196,127,10,0.4); color: #C8A882; }
         [data-theme="dark"] .qc-popup-no:hover { border-color: #c47f0a; color: #EFE0CE; }
+
+        /* ── Eid Sale Banner ── */
+        .eid-sale-banner {
+            background: linear-gradient(135deg, #1a6b3a 0%, #2d9a5a 50%, #1a6b3a 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 20px 5%;
+            border-radius: 16px;
+            margin: 0 auto 2.5rem;
+            max-width: 800px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(26, 107, 58, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.18);
+            line-height: 1.6;
+        }
+        .eid-sale-banner .eid-title {
+            font-family: 'Bely Display', serif;
+            font-size: 1.4rem;
+            display: block;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .eid-sale-banner .eid-price {
+            font-family: 'Bely Display', serif;
+            font-size: 1.8rem;
+            color: #f5c430;
+            font-weight: 700;
+        }
+        .eid-sale-banner .eid-old-price {
+            text-decoration: line-through;
+            opacity: 0.65;
+            font-size: 1rem;
+            margin-left: 8px;
+            font-weight: 400;
+        }
+        .eid-sale-banner .eid-sub {
+            display: block;
+            font-size: 0.88rem;
+            opacity: 0.85;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+        [data-theme="dark"] .eid-sale-banner {
+            background: linear-gradient(135deg, #0f4224 0%, #1a6b3a 50%, #0f4224 100%);
+            box-shadow: 0 8px 30px rgba(15, 66, 36, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -1553,6 +1600,13 @@
     <section id="preorder">
         <h2 class="section-title">Buy Shia Deal Now</h2>
         <p class="section-subtitle">Buy a pack of Shia Deal cards, and become a caretaker for the holy lands</p>
+
+        <div class="eid-sale-banner">
+            <span class="eid-title">🌙 Eid Mubarak Sale! 🕌</span>
+            Celebrate Eid with a limited-time offer — only <span class="eid-price">£22</span><span class="eid-old-price">£25</span>
+            <span class="eid-sub">Use code <strong>EIDMUBARAK</strong> at checkout · Offer ends soon</span>
+        </div>
+
         <div class="preorder-container">
             <div class="preorder-image">
                 <!-- Left arrow button -->
@@ -1573,7 +1627,7 @@
             </div>
             <div class="preorder-details">
                 <h3>Shia Deal Card Game</h3>
-                <div class="price" style="margin-bottom:0;line-height:1;">£25.00 <span>+ shipping</span></div>
+                <div class="price" style="margin-bottom:0;line-height:1;">£22.00 <span style="text-decoration:line-through;color:#bbb;font-size:1.1rem;margin-left:6px;">£25.00</span> <span>+ shipping</span></div>
                 <p style="margin:0 0 1rem 0;font-size:0.9rem;color:#888;">Canada collection: <strong style="color:var(--gold);">35 CAD</strong></p>
 
                 <ul class="preorder-features">
